@@ -1,68 +1,11 @@
 #!/usr/bin/env python
 
-from sklearn.datasets import load_files
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import SGDClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import Pipeline
-
-from pathlib import Path
-import pickle
+from lib import TextClassifier
 
 
 def main():
-    MODEL_PATH = Path("text_model.pkl")
-
-    # Load the training data
-    training_set = load_files("posts_corpus", shuffle=True, encoding="utf-8")
-
-    # Setup a pipeline for the classifier
-    # - Generates feature vectors using a count vectorizer
-    # - Determines term frequency inverse document frequency
-    # - Classifies using a linear SVM
-    classifier_pipeline = Pipeline(
-        [
-            ("frequency_vectorizer", TfidfVectorizer()),
-            (
-                "classifier",
-                SGDClassifier(
-                    penalty="l2",
-                    tol=None,
-                ),
-            ),
-        ]
-    )
-
-    # Model is pickled when possible, so that we don't have to always retrain it
-    if MODEL_PATH.is_file():
-        with MODEL_PATH.open("rb") as pickled:
-            grid_search_classifier = pickle.load(pickled)
-    else:
-        # Select optimal pipeline parameters using grid search
-        parameters = {
-            "frequency_vectorizer__ngram_range": [(1, 1), (1, 2)],
-            "frequency_vectorizer__use_idf": (True, False),
-            "classifier__alpha": (1e-2, 1e-3),
-            # These are the loss fuctions that support `predict_proba`
-            # https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier.predict_proba
-            "classifier__loss": ("log", "modified_huber"),
-        }
-
-        grid_search_classifier = GridSearchCV(
-            classifier_pipeline, parameters, cv=5, n_jobs=-1
-        )
-        grid_search_classifier = grid_search_classifier.fit(
-            training_set.data, training_set.target
-        )
-
-        with MODEL_PATH.open("wb") as to_pickle:
-            pickle.dump(grid_search_classifier, to_pickle)
-
-    # TODO: score can be used to rank things off new data
-    check = "2k hours, looking for a squad to raid with"
-    print(training_set.target_names[grid_search_classifier.predict([check])[0]])
-    print(grid_search_classifier.predict_proba([check]))
+    classifier = TextClassifier()
+    print(classifier.predict("2k hours, looking for a squad to raid with"))
 
 
 if __name__ == "__main__":
