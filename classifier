@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from sklearn.datasets import load_files
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import MultinomialNB
@@ -23,8 +23,7 @@ def main():
     # - Classifies using a linear SVM
     classifier_pipeline = Pipeline(
         [
-            ("feature_vectors", CountVectorizer()),
-            ("term_frequency", TfidfTransformer()),
+            ("frequency_vectorizer", TfidfVectorizer()),
             (
                 "classifier",
                 SGDClassifier(
@@ -42,8 +41,8 @@ def main():
     else:
         # Select optimal pipeline parameters using grid search
         parameters = {
-            "feature_vectors__ngram_range": [(1, 1), (1, 2)],
-            "term_frequency__use_idf": (True, False),
+            "frequency_vectorizer__ngram_range": [(1, 1), (1, 2)],
+            "frequency_vectorizer__use_idf": (True, False),
             "classifier__alpha": (1e-2, 1e-3),
             # These are the loss fuctions that support `predict_proba`
             # https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier.predict_proba
