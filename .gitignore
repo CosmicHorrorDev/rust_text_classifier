@@ -1,2 +1,7 @@
-# Ignore any pickled objects
-**.pkl
+*.pyc
+__pycache__
+/dist/
+*.egg-info
+.mypy_cache
+.hypothesis
+*.pkl

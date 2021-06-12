@@ -12,10 +12,10 @@ import pickle
 
 
 def main():
-    MODEL_PATH = Path("stored_model.pkl")
+    MODEL_PATH = Path("text_model.pkl")
 
     # Load the training data
-    training_set = load_files("corpus", shuffle=True, encoding="utf-8")
+    training_set = load_files("posts_corpus", shuffle=True, encoding="utf-8")
 
     # Setup a pipeline for the classifier
     # - Generates feature vectors using a count vectorizer
@@ -61,7 +61,7 @@ def main():
             pickle.dump(grid_search_classifier, to_pickle)
 
     # TODO: score can be used to rank things off new data
-    check = "What should I use for a web server? warp or tide"
+    check = "2k hours, looking for a squad to raid with"
     print(training_set.target_names[grid_search_classifier.predict([check])[0]])
     print(grid_search_classifier.predict_proba([check]))
 
