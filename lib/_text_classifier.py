@@ -1,3 +1,4 @@
+from numpy.random import RandomState
 from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
@@ -13,12 +14,73 @@ import pickle
 MODEL_PATH = Path("text_model.pkl")
 
 
-# TODO: score can be used to rank things off new data
+# TODO: dedup logic around setting up the pipeline. This can be done when the classifier
+# gets multiple constructors setup
+# TODO: set this up to return more info if possible. Would be nice to see:
+# - Per category information
+# - Number of incorrect matches
+# - Ability to set a threshhold along with reporting how many are ignored by it
+# TODO: use random state normally
+# TODO: setup tests for things
+def score_classifier(*, training_percentage=0.8) -> numpy.float64:
+    # Load the training data
+    training_set = load_files(
+        "posts_corpus", shuffle=True, encoding="utf-8", random_state=RandomState()
+    )
+
+    # Setup a pipeline for the classifier
+    # - Generates feature vectors using a count vectorizer
+    # - Determines term frequency inverse document frequency
+    # - Classifies using a linear SVM
+    classifier_pipeline = Pipeline(
+        [
+            ("frequency_vectorizer", TfidfVectorizer()),
+            (
+                "classifier",
+                SGDClassifier(
+                    penalty="l2",
+                    random_state=RandomState(),
+                    tol=None,
+                ),
+            ),
+        ]
+    )
+
+    # Select optimal pipeline parameters using grid search
+    parameters = {
+        "frequency_vectorizer__ngram_range": [(1, 1), (1, 2)],
+        "frequency_vectorizer__use_idf": (True, False),
+        "classifier__alpha": (1e-2, 1e-3),
+        # These are the loss fuctions that support `predict_proba`
+        # https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier.predict_proba
+        "classifier__loss": ("log", "modified_huber"),
+    }
+
+    training_set_split = int(len(training_set.data) * training_percentage)
+    # TODO: switch this over to a log message once that's setup
+    print(f"Training set size: {training_set_split}")
+    print(f"Test set size: {len(training_set.data) - training_set_split}")
+    grid_search_classifier = GridSearchCV(
+        classifier_pipeline, parameters, cv=5, n_jobs=-1
+    )
+    grid_search_classifier = grid_search_classifier.fit(
+        training_set.data[:training_set_split], training_set.target[:training_set_split]
+    )
+
+    return grid_search_classifier.score(
+        training_set.data[training_set_split:],
+        training_set.target[training_set_split:]
+    )
+
+
 class TextClassifier:
     # TODO: clean up initialization with multiple constructors
-    def __init__(self, retrain=False):
+    def __init__(self, *, retrain=False) -> None:
         # TODO: switch this out for a custom function to load from multiple
         # sources and to slim down reading just the category types
+        # - Pull from different sources
+        # - read equal number of rust game and rust lang posts
+        # - setup formatting the original json file on the fly
         # TODO: pickle target categories as well?
         # Load the training data
         training_set = load_files("posts_corpus", shuffle=True, encoding="utf-8")
@@ -33,15 +95,15 @@ class TextClassifier:
         self.categories = training_set.target_names
         self.classifier = grid_search_classifier
 
-    def _load(self):
+    def _load(self) -> None:
         with MODEL_PATH.open("rb") as pickled:
             return pickle.load(pickled)
 
-    def _store(self, grid_search_classifier):
+    def _store(self, grid_search_classifier) -> None:
         with MODEL_PATH.open("wb") as to_pickle:
             pickle.dump(grid_search_classifier, to_pickle)
 
-    def _from_training(self):
+    def _from_training(self) -> GridSearchCV:
         # Load the training data
         training_set = load_files("posts_corpus", shuffle=True, encoding="utf-8")
 

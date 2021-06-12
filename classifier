@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-from lib import TextClassifier
+from lib import score_classifier
 
 
 def main():
-    classifier = TextClassifier()
-    print(classifier.predict("2k hours, looking for a squad to raid with"))
+    print(f"{100 * score_classifier()}%")
+    # classifier = TextClassifier()
+    # print(classifier.predict("2k hours, looking for a squad to raid with"))
+    # print(classifier.predict("Difficulty figuring out how to implement Iterator on custom types"))
 
 
 if __name__ == "__main__":
