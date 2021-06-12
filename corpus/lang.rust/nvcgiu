@@ -1,0 +1,10 @@
+"error: no override and no default toolchain set" Can anyone help me?
+Hello,
+
+today I installed CRUX 3.6 on my laptop, after installing dwm, I was trying to compile librsvg (rust app, dependency of adwaita-icon-theme and other themes), but as the title says, error: no override and no default toolchain set. I installed rust via [http://rustup.rs](http://rustup.rs)
+
+&#x200B;
+
+Can anyone help me?
+
+Thanks

@@ -1,0 +1,18 @@
+Why lifetime parameter of type needed here?
+    pub enum Cont {
+        F1(Box<dyn Fn(u64)->u64>)
+    }
+    
+    fn add_func1<T : From<u64>, V : Into<u64>>(f1: fn(T)->V) -> Cont {
+        Cont::F1(Box::new(move |a:u64|->u64 { f1(a.into()).into() }))
+    }
+
+I am trying to create a function container which takes u64 and returns u64. I added a helper function where we can add any function whose input type and the return type is convertible to u64.
+
+However, when I compile this, I get this error (Link [https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5a2fe26b338551f76b70019536a754b3](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5a2fe26b338551f76b70019536a754b3))
+
+    error[E0310]: the parameter type `V` may not live long enough --> src/main.rs:7:14   | 6 | fn add_func1<T : From<u64>, V : Into<u64>>(f1: fn(T)->V) -> Cont {   |                             -- help: consider adding an explicit lifetime bound...: `V: 'static +` 7 |     Cont::F1(Box::new(move |a:u64|->u64 { f1(a.into()).into() }))   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ...so that the type `[closure@src/main.rs:7:23: 7:64]` will meet its required lifetime bounds
+    
+    error[E0310]: the parameter type `T` may not live long enough --> src/main.rs:7:14   | 6 | fn add_func1<T : From<u64>, V : Into<u64>>(f1: fn(T)->V) -> Cont {   |              -- help: consider adding an explicit lifetime bound...: `T: 'static +` 7 |     Cont::F1(Box::new(move |a:u64|->u64 { f1(a.into()).into() }))   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ...so that the type `[closure@src/main.rs:7:23: 7:64]` will meet its required lifetime bounds 
+
+It says parameter type T and V does not long enough. But I don't get why the lifetime of the function parameter that is invoked inside of the closure really matters?

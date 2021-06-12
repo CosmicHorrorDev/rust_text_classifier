@@ -1,0 +1,16 @@
+Textwrap 0.14.0 released with support for wrapping text without word separators
+Hi all,
+
+It's my pleasure to announce a new major release of [textwrap](https://lib.rs/textwrap): [version 0.14.0](https://github.com/mgeisler/textwrap/blob/master/CHANGELOG.md#version-0140-2021-06-05). I would like to point out two highlights:
+
+* Textwrap will now use the Unicode Linebreaking algorithm by default, courtesy of the [unicode-linebreak](https://lib.rs/unicode-linebreak) crate. Before, words were found by splitting on space, now they are found using the Unicode break properties. This allows breaking East-Asian text like `"你好"` into `"你"` and `"好"` and a string of emojis like `"😂😍"` into `"😂"` and `"😍"`. The Unicode line breaking algorithm also prevents breaks in certain cases, such as in `"Bonjour !"` where French punctuation rules require a non-breaking space before `"!"`.
+
+  You can customize this by implementing the `WordSeparator` trait, and you can avoid the new dependency if separating words by `' '` is good enough. Support for wrapping using [rust_icu](https://lib.rs/rust_icu) is [planned](https://github.com/mgeisler/textwrap/issues/334).
+
+* Thanks to the excellent support for [WebAssembly in Rust](https://rustwasm.github.io/), we now have a little demo which lets you **try out Textwrap in your browser: https://mgeisler.github.io/textwrap/.** It was a ton of fun to write this!
+
+   The demo shows how Textwrap can be used to wrap both proportional and fixed-width text. In the demo, the text is rendered on a HTML canvas element, but it could just as well go to a PDF file, a GUI, or similar. The ability to wrap text outside of the terminal was added in [version 0.13.0](https://github.com/mgeisler/textwrap/blob/master/CHANGELOG.md#version-0130-2020-12-05).
+
+In addition to these new features, Textwrap still supports [linear-time wrapping of full paragraphs](https://docs.rs/textwrap/0.14.0/textwrap/wrap_algorithms/fn.wrap_optimal_fit.html) as well as machine hyphenation via the [hyphenation](http://lib.rs/hyphenation) crate. You also get [indentation](https://docs.rs/textwrap/0.14.0/textwrap/fn.indent.html) support.
+
+Please give it a spin and let me know of any problems!

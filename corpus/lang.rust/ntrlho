@@ -1,0 +1,26 @@
+5 years later, open sourcing the PlayRustClassifier
+Recently [it was requested](https://www.reddit.com/r/rust/comments/nrr3k3/can_we_get_a_pinned_post_about_the_game/h0idouo/?context=8&depth=9) that I open source the code behind the PlayRustClassifier, a project that /u/pegasos1 and I built for our RustConf 2016 talk - my first conference talk and an overall incredible experience.
+
+We wanted to evaluate Rust for machine learning/ data science, so we built a fairly simplistic binary classifier to determine if a post was actually about rust-the-video-game or rust-the-programming-language. I refuse to watch myself give a talk, but as I recall it actually ended up being pretty accurate - not too surprising given the features that we extracted (ie: presence of a Rust keyword was a considerable weight).
+
+Looking back on the code it's sort of hilarious to think of how far Rust has come. First of all, it doesn't compile (and it seems to reference a dependency by path that I've now lost? mighta been vendored and patched, I seem to recall some panics in ML libs back then), and I forgot that even back then I had to use things like \`#!\[feature(custom\_derive, plugin)\]\` just to work with json. Nightly rust and constantly breaking dependencies was just the way things were.
+
+Our Rust skills back in 2016 were also... not as evolved. It was also written in free time, while also preparing for the conference talk - basically, it's not great.
+
+PRs are welcome, although frankly I just recommend you fork it - I'm happy to rubber stamp PRs but I rarely check my personal github these days. I actually don't have my git SSH key on my main laptop otherwise I would have already cleaned up a ton. If anyone is interested, I quickly wrote up an issue on Github with some of the obvious first steps to fixing this code up.
+
+Fixup issue:
+
+[https://github.com/insanitybit/PlayRustClassifier/issues/new](https://github.com/insanitybit/PlayRustClassifier/issues/new)
+
+The talk:
+
+[https://www.youtube.com/watch?v=lY10kTcM8ek](https://www.youtube.com/watch?v=lY10kTcM8ek&t=7s)
+
+The code:
+
+[https://github.com/insanitybit/PlayRustClassifier](https://github.com/insanitybit/PlayRustClassifier)
+
+&#x200B;
+
+cc /u/po8 who made the request

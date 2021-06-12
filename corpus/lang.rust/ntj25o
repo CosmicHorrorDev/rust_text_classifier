@@ -1,0 +1,10 @@
+I wrote an asynchronous weatherlogger.
+This is the first time i am sharing one of my side projects publicly.
+
+This has been a side-project i have worked on for some time. It started with writing a shell script to get the weather from [OpenWeatherMap](https://openweathermap.org) which i rewrote into Python and later into Rust. 
+
+At first it was synchronous program which formatted the json data and printed the result out to stdout(which it currently still does). It later became asynchronous using (tokio and reqwest) with the weather having its own representation in the program. 
+
+I am now planning to add support for writing directly onto a database and csv-file, and adding the option to create plots of the data stored in those. As well as adding support for other weather sites. I would love some feedback :). 
+
+I do apologize if this is not the right place to post about my Rust side project, if this is the case please point me in the right direction.

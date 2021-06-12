@@ -1,0 +1,2 @@
+Why if a type implements Drop, it cannot implement Copy?
+I know what Drop and Copy does, but I don't know what's the connection between them and why if a type implements Drop, it cannot implement Copy? I read this from the *Programming rust* book. Thanks.

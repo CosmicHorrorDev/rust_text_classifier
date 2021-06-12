@@ -1,0 +1,39 @@
+Newbie question about performance
+Hello fellow rustaceans, I encountered something strange while playing with some arena-like structure that holds "Node" elements and would really appreciate your wisdom. The "Node" elements are supposed to be connected in a tree like structure. I implemented a couple of ways to get full path for a given node element (for example: "root\_parent1\_parent2\_element"), however, I am seeing a strange difference in performance between both implementations.
+
+    fn path(&self, node_index: usize) -> String {
+        let mut path = String::new();
+        let mut index = node_index;
+    
+        loop {
+            let node = &self.arena[index];
+            path += &format!("_{}", node.name);
+    
+            if let Some(parent_index) = node.parent{
+                index = parent_index;
+            } else {
+                break
+            }
+        }
+        return path;
+    }
+    
+    fn r_path(&self, node_index: usize) -> String {
+        let node = &self.arena[node_index];
+    
+        // If we are not at the root -> get parent string,
+        // add our name to it and return that to lower caller
+        if let Some(parent_index) = node.parent{
+            let mut path = self.r_path(parent_index);
+            path += &format!("_{}", node.name);
+            return path;
+        } else {
+            // We are at the root -> just return the current name
+            return String::from(node.name);
+        }
+    }
+
+The recursive version seems to perform \~25% faster than the loop version and it's the opposite of what I expected. Number of local variables & if-conditions of both versions is very similar. I imagined that the recursive function calls will have a bigger overhead than the simple "while" loop iterations. Can anyone please help me understand where the performance difference might be coming from. The full version of the code can be found [here](https://github.com/AngelVI13/kars/blob/main/src/main.rs).  
+
+
+PS: I am aware that the output of "path" is not the same as "r\_path".

@@ -1,0 +1,55 @@
+Attempting to
+I've spent most of my programming life thinking in Java and have started playing around with Rust in some personal projects. I'm trying to wrap my head around Rust enums, which seem much closer to algebraic data types from Haskell than enums from Java.
+
+I'm struggling to model a situation where I'd normally use a Java enum to map my code model to a set of constants. Just for a really terrible example, if I wanted to map baseball statistics to their short form name, I'd write up something like this:
+
+    public enum Statistic {
+      BATTING_AVERAGE("BA"),
+      ON_BASE_PERCENTAGE("OBP"),
+      ...
+      ;
+
+      public final String shortName;
+
+      Statistic(String shortName) {
+        this.shortName = shortName;
+      }
+
+      public static Optional<Statistic> fromString(String maybeStatistic) {
+        return Stream.of(Statistic.values())
+          .filter(stat -> stat.shortName.equalsIgnoreCase(maybeStatistic))
+          .findFirst();
+      }
+    }
+
+It's pretty concise and I never have to repeat the `BA` string anywhere: it's always associated with that enum entry.
+
+What's the best way to model this in Rust? My attempt is pretty ugly and I think I'm doing something wrong because it gives me none of the enum<=>string relationship that is guaranteed from my Java enum:
+
+    enum Statistic {
+        BattingAverage,
+        ...
+    }
+
+    impl Statistic {
+        fn short_name(&self) -> String {
+            match self {
+                Statistic::BattingAverage => String::from("BA"),
+                ...
+            }
+        }
+    }
+
+    impl FromStr for Statistic {
+        type Err = String;
+
+        fn from_str(stat: &str) -> Result<Statistic, Self::Err> {
+            match stat.to_uppercase().as_str() {
+                "BA" => Ok(Statistic::BattingAverage),
+                ...
+                _ => Err(format!("Unrecognized statistic {}", stat)),
+            }
+        }
+    }
+
+Am I just thinking about this wrong? Is there a better way?

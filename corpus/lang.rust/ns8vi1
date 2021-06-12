@@ -1,0 +1,30 @@
+Meet Crusty, Fast Scalable && Polite Broad Web Crawler Built With Rust!
+I've always been fascinated with web crawling and especially broad web crawling - it presents unique set of most interesting challenges...
+
+So I thought why not learn Rust and make a Broad Web Crawler... Ambitious challenge? I'm in!
+
+Crusty is designed to:
+
+\- Provide a way to study www and area of broad web crawling in particular
+
+\- Provide program interfaces for extensibility, configurability and custom data collection
+
+\- Be uncompromisingly fast with stable && predictable single node performance && decent hardware saturation(rust seems like a natural, almost perfect fit)
+
+\- Scale with ease(from gprs connection to 10gbit/s port and beyond)
+
+\- Be polite(probably the most important part of broad web crawling)
+
+\- Be observable(logs, custom metrics, real-time grafana dashboard)
+
+\- Be easy to interfact with(build and run just with one command, reproducible docker builds)
+
+You can check Crusty at [https://github.com/let4be/crusty](https://github.com/let4be/crusty)
+
+While I was working on Crusty I realized that the web crawling core is universal and spent some time separating crawling logic into a library [https://github.com/let4be/crusty-core](https://github.com/let4be/crusty-core)
+
+Now Crusty is built on top of Crusty-core which handles all low-level aspects of web crawling while exposing configurability interfaces and ways to fetch the data.
+
+While I haven't reached 100% of my goals I think Crusty is at a stage where it's reasonably stable, configurable and usable in general to be experimented with by other people if someone is interested :)
+
+Would love to hear your thoughts!

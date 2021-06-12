@@ -1,0 +1,4 @@
+Stopping and later resuming a partial download with Rust
+I'm making an application that has asynchronous downloading of multiple files, but I am looking at what happens if the application is turned off while files are downloading.  
+
+It appears that the downloads have to start over from scratch.  So far I'm not able to find any information on how to stop a download midway and resume that download later in Rust.  Anyone have any ideas for where to start on this?

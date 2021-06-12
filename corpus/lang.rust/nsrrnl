@@ -1,0 +1,128 @@
+Problem with shell i'm making
+So, i'm trying to learn rust by writing a shell in it. After entering raw mode I had the issue where when I input a newline to type a command it still keeps it's x position, the solution was to simply replace '\\n' with '\\r\\n'. But now I have an issue where the newlines in the output of the command are still keeping X position. 
+
+[Example running 'ls -l'](https://preview.redd.it/7gmgxs1iye371.png?width=1920&format=png&auto=webp&s=a8fae70bde1cb84818d86c95eaf9abc17f0421fb)
+
+In the code im running the command with the .spawn() function, I have tried using .output() instead to put the output into a variable as a string then filitering and printing that. But then I can't launch TUI applications such as vim.
+
+So I guess my question is how could I make newlines go back to the beginning in my command output while still keeping TUI app functionality?
+
+&#x200B;
+
+main.rs -
+
+    extern crate termion;
+    use std::{fs, env};
+    use std::io::{stdin, stdout, Write};
+    use std::process::Command;
+    use termion::clear::CurrentLine;
+    use termion::event::Key;
+    use termion::input::TermRead;
+    use termion::raw::IntoRawMode;
+    use termion::color;
+    use termion::style;
+    
+    // OPTIONS
+    static prompt:&str = "shell > ";
+    static error_msg:&str = "??? wat";
+    
+    static error_color:color::Red = color::Red;
+    
+    
+    fn main() {
+    
+        let stdin = stdin();
+    
+        // going into raw mode
+        let mut stdout = stdout().into_raw_mode().unwrap();
+    
+        // detecting keydown events
+        let mut command = String::new();
+        print!("\r{} ", prompt);
+        stdout.flush().unwrap();
+        for c in stdin.keys() {
+            match c.unwrap() {
+    
+                Key::Ctrl('z') => break, // Exit on Ctrl-Z
+                Key::Char('\t') => {
+                    print!("\r");
+                    command = autocomplete(&command); // function to run when Tab is pressed
+                    print!("{}\r{} {}", termion::clear::CurrentLine, prompt, command); // clear line
+                }
+                Key::Char('\n') => { // When enter is pressed
+                    print!("\n"); // print new line
+                    run_command(&command);
+                    command = "".to_string(); // reset command
+                    print!("\r{} ", prompt); // print new line
+                },
+                Key::Char(c) => { // when any regular character is pressed
+                    print!("{}", c); // print character
+                    command.push(c); // append character to command
+                },
+                Key::Backspace => { // when backspace is pressed
+                    command.pop();
+                    print!("{}\r{} {}", termion::clear::CurrentLine, prompt, command); // clear line
+                },
+                _ => print!("{}", command), // else print command
+            }
+    
+            stdout.flush().unwrap();
+        }
+    }
+    
+    fn run_command(command: &str) {
+        let mut parts = command.trim().split_whitespace(); // split command at each space
+        let command = parts.next().unwrap(); // set command to first word
+        let args = parts; // set args to everything in parts except first word
+    
+        match command {
+            "cd" => {
+                let new_dir = args.peekable().peek().map_or("/", |x| x);
+                let root = std::path::Path::new(new_dir);
+                if let Err(e) = env::set_current_dir(&root) {
+                    eprintln!("{}{}{}", color::Fg(error_color), error_msg, color::Fg(color::Reset));
+                }
+            }
+            command => {
+                let child = Command::new(command) // run the command and store it in child
+                    .args(args) // set args to well... args
+                    .spawn(); // run the command
+    
+                match child { // handling bad input
+                    Ok(mut child) => {child.wait(); },
+                    Err(e) => eprintln!("{}{}{}", color::Fg(error_color), error_msg, color::Fg(color::Reset)), // error message
+                };
+            }
+        }
+    }
+    
+    fn autocomplete(command: &str) -> String {
+        let paths = fs::read_dir("./").unwrap();
+    
+        let mut parts = command.trim().split_whitespace().peekable();
+        let mut without_last = String::new();
+        let mut last = String::new();
+    
+        while let Some(part) = parts.next() {
+            if parts.peek().is_some() {
+                // Not the last
+                without_last.push_str(part);
+            } else {
+                // last
+                last.push_str(part);
+            }
+        }
+    
+        let mut found = String::new();
+    
+        for path in paths {
+            let mut name: String = path.unwrap().path().display().to_string();
+            if name.contains(&last) {
+                found = without_last + " " + &name;
+                break
+            } else {
+                found = command.to_string();
+            }
+        }
+        found
+    }

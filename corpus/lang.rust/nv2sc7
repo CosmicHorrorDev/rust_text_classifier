@@ -1,0 +1,4 @@
+Does async/await make M:N threads possible in Rust?
+I know that green threads aren't part of the standard library for some good reasons, but I'm trying to figure out how to get some lightweight threads up and running in a way that can still be parallelized.
+
+Is there a way to combine system threads with async/await in a way that "simulates" something like M:N threads? Is there a library that provides that abstraction?

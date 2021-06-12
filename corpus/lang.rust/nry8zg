@@ -1,0 +1,69 @@
+First release of Hoard dotfile manager
+Hi everyone! I'm excited to announce the first release of a project I've been working on for a while now called Hoard.
+
+# What is Hoard?
+
+Hoard is a program that backs up sparse files from across your filesystem into a single location and can later restore them. Some of you might know programs like this as "dotfile managers," like [RCM](https://github.com/thoughtbot/rcm) and [Chezmoi](https://www.chezmoi.io/).
+
+Where Hoard is different, aside from being written in Rust, is that it is based around a configuration file. Where both RCM and Chezmoi recreate your home folder's file structure when you add files, Hoard organizes files based on the names of Hoards and Piles in those Hoards.
+
+(See more on terminology [here](https://github.com/Shadow53/hoard#terminology))
+
+# History
+
+Hoard originally started out as a program for synchronizing save files for games that don't support cloud saves. I realized it was very close to a dotfile manager, so I made it more generic for those sorts of workflows.
+
+# Example
+
+Where Hoard's power shines is how it can treat multiple paths as potential sources for those files depending on the system configuration. My favorite example for this is Vim and Neovim on Windows and Linux. The configuration file looks like this:
+
+    # Neovim is mutually exclusive with Vim, prefer Neovim
+    exclusivity = [
+        ["neovim", "vim"]
+    ]
+    
+    # Define environments
+    [envs.neovim]
+        # Detect "neovim" if AT LEAST one of `nvim` or `nvim-qt` exists in $PATH.
+        # This is parsed as `nvim OR nvim-qt`.
+        exe_exists = ["nvim", "nvim-qt"]
+    [envs.vim]
+        # Detect "vim" if AT LEAST one of `vim` or `gvim` exists in $PATH.
+        exe_exists = ["vim", "gvim"]
+    [envs.windows]
+        os = ["windows"]
+    [envs.linux]
+        os = ["linux"]
+    
+    # Define the Vim hoard
+    [hoards.vim]
+        # The init file "pile"
+        [hoards.vim.init]
+            # Match linux AND neovim environments
+            "linux|neovim" = "/home/shadow53/.config/nvim/init.vim"
+            "linux|vim" = "/home/shadow53/.vimrc"
+            "windows|neovim" = "C:\\Users\\Shadow53\\AppData\\Local\\nvim\\init.vim"
+            "windows|vim" = "C:\\Users\\Shadow53\\.vim\\_vimrc"
+        # The config directory "pile"
+        [hoards.vim.configdir]
+            "windows|neovim" = "C:\\Users\\Shadow53\\AppData\\Local\\nvim\\config"
+            "windows|vim" = "C:\\Users\\Shadow53\\.vim\\config"
+            "linux|neovim" = "/home/shadow53/.config/nvim/config"
+            "linux|vim" = "/home/shadow53/.vim/config"
+
+With this configuration file, if I run `hoard restore vim` on my Fedora Workstation with both Vim and Neovim installed, it will copy files from the hoard to the appropriate locations for Neovim (because it takes preference to Vim) on Linux.
+
+# Current status
+
+You can find a usage overview in the [README](https://github.com/Shadow53/hoard/blob/main/README.md), which does a decent job describing what features exist, including stuff not described here.
+
+You can also check the [issues page](https://github.com/Shadow53/hoard/issues) for issues I've opened, primarily for keeping track of features I want to add, including:
+
+- (A)symmetric encryption of files
+- Commands to check for differences between hoards and the filesystem
+- A way to keep track of whether something got updated on a remote machine
+  - This is to help prevent overwriting changes on backup/restore and allow scripting for automatically applying new versions of files.
+
+# Thoughts?
+
+If this sounds at all interesting to you, please try it out! You can install it with `cargo install hoard`. If you have questions, leave them below and I will get to them. If you find any bugs *not already listed on the issue tracker*, please create a bug report so I can fix it.

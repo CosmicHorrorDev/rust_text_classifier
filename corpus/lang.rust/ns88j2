@@ -1,0 +1,11 @@
+Q: What is the purpose of Rust major version? How does it go together with editions?
+    $ rustc --version
+      rustc 1.52.1 (9bc8c42bb 2021-05-09)
+
+What does the first "1" signify? How does it differ from Rust editions? Will there ever be a need for Rust "2"? If not, is it just a legacy relic from "before editions" times?
+
+As a beginner, this question was always bothering me. I started being even more curious after reading this comment (and the reply): [https://www.reddit.com/r/rust/comments/n9z7lm/the\_plan\_for\_the\_rust\_2021\_edition/gxrfnlk/?utm\_source=share&utm\_medium=ios\_app&utm\_name=iossmf&context=3](https://www.reddit.com/r/rust/comments/n9z7lm/the_plan_for_the_rust_2021_edition/gxrfnlk/?utm_source=share&utm_medium=ios_app&utm_name=iossmf&context=3)
+
+>All editions will be supported forever. Rust 2015 will stay the same in 40 years, that is the plan. This makes it even possible to mix Rust code from 2015 with a potential Rust 2077. That is why the editions system was created.
+
+Could you please help me to understand the purpose of editions vs (major) versions in Rust? Thanks!

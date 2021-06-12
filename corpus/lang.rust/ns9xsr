@@ -1,0 +1,14 @@
+What does a Struct Return?
+So coming from the land of javascript into rust I want to make sure my understanding of Structs is accurate and I'm not mixing up concepts.   
+
+
+A struct is like a class?  
+
+
+implementations are akin to how you add "methods" to the class  
+
+
+I'm not exactly sure what a struct returns when it's actually called by a variable... so if anyone knows what that is called I'd really appreciate knowing.   
+
+
+is there anything else I should know about structs in rust?

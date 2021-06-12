@@ -1,0 +1,36 @@
+Mini fps drops every one minute
+**Specs:**
+
+Intel I7 10700 (OC'd @ 4.6ghz)  
+Nvidia Geforce RTX 3080  
+32 GB Corsair DDR4 Vengeance LPX 3600mhz   
+Samsung EVO 970 m.2 SSD  
+Gigabyta 850 Watt ATX 80+ Gold power supply
+
+AGON 170mhz 1440p monitor
+
+AVG FPS: 100-140 on ultra (geforce experience settings)  
+CPU Temp: 45-70 C  under load  
+GPU Temp: 60-80 C under load
+
+**The issue;**
+
+Hi everyone,
+
+Recently i've noticed these mini lag spikes / stutters while playing rust and seeing the FPS drop from 100/140 to around 70/80. It will freeze the game for a tiny second and then it will just continue running fine.  
+These stutters last for about half a second and i've timed them to happen around every minute (only when running around or looking). 
+
+I'm sure it's something new and i have not had this issue before.
+
+It's not the garbage collecter issue, since i can actually see the GC(!) when that happens. This is something different.
+
+The build is quite new (around 3 months old) i designed the set up and outsourced it to a tech store.
+
+I've already checked the temps, i've reinstalled the game and checked the integrity of the files. I did Windows mem diagnostic (no issues) and i even cleaned it out (not that there was much dust after only a few weeks). I basicly did everything that google presented me with..
+
+Oh, and i don't notice this issue when im playing let's say APEX. So i'm getting really frustrated. 
+
+  
+I hope anyone else has any idea what this might be. 
+
+Thanks in advance!

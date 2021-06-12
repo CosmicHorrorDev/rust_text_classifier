@@ -1,0 +1,6 @@
+embed chromium in a rust gui
+Hey all, does anyone know if it's possible to embed a chromium rendering frame inside of a rust-powered GUI?
+
+My use case is I have some data that needs to be displayed to the user without the host being able to read it. On a website/in a browser I just use an iframe, and I was wondering if I could extend this to locally running applications.
+
+Of course, even if it is possible to embed, the point would be moot if I can deconstruct the embedded frame to extract text written in it.

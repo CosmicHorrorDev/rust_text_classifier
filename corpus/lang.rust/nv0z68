@@ -1,0 +1,8 @@
+Is there a rust equivalent to ArchUnit?
+Hello,
+
+In order to maintain large code bases with many contributors, architecture tests help to enforce a certain type of architecture and prevent nasty cyclic dependencies.
+
+In Java and C# there is ArchUnit, which does this job more or less perfectly.
+
+I was wondering if there is an equivalent int rust?

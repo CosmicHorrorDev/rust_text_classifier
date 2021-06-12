@@ -1,0 +1,58 @@
+trying to understand async rust
+hey all! rust newbie here!  I've just finished the rust book, and want to try to use the knowledge gained to learn a bit more about web development with rust.  my background is mostly in ruby, with some experience also in go.  Right now I'm getting a little stuck with spawning threads regularly in rust (which i understand are just OS threads) vs using async rust (primarily I'm looking into tokio at the moment).
+
+From what I understand, when you call an async function in rust, you have to use the .await method to actually "load" the function. This then tells the runtime (I guess this is a rust implemented scheduler essentially?) that when you call this function, you can go do something else and come back to it later.
+
+With this in mind, I would think that if I have some async function:
+```
+async fn sleep_and_print(s: &str, duration: Duration) {
+       sleep(duration).await;
+       println!("{}", s);
+}
+```
+
+And then I was using it in a runtime like so:
+```
+use tokio::time::{sleep, Duration};
+
+fn main() {
+    rt.block_on(async {
+        sleep_and_print("a", Duration::from_secs(3)).await;
+        sleep_and_print("b", Duration::from_secs(1)).await;
+        sleep_and_print("c", Duration::from_secs(2)).await;
+    })
+}
+```
+
+I would expect output in order of "b", "c", "a", however I get "a", "b", "c".
+
+This changes if I put everything into tokio threads:
+```
+    rt.block_on(async {
+        tokio::spawn(async {
+            sleep_and_print("a", Duration::from_secs(3)).await;
+        });
+        tokio::spawn(async {
+            sleep_and_print("b", Duration::from_secs(1)).await;
+        });
+        tokio::spawn(async {
+            sleep_and_print("c", Duration::from_secs(2)).await;
+        });
+        sleep(Duration::from_secs(4)).await;
+    })
+```
+output: "b", "c", "a"
+
+This is also the same output if I use the std library's versions of what is provided by tokio
+
+```
+use std::thread::sleep;
+use std::time::Duration;
+```
+
+Making this equivalent to spawning os threads.
+
+My questions are:
+ - without using tokio threads, what's the difference between using tokio and async functions vs just regular sync rust?  
+- And if there's no difference, why use any async functions outside of spawned tokio threads?
+- And since tokio threads seem to be working similar to regular os threads, what's the point in using tokio threads at all actually?

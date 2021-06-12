@@ -1,0 +1,20 @@
+Understanding rust variable reassignment.
+Hello, fellow Rusteceans. I am a newbie to rust. I don't really understand how variable reassignment works yet.
+
+So my question is this let's say I have a variable
+
+let x = 2;
+
+I can't assign another value to x 
+
+x = 3;
+
+that is not possible, but I can do this
+
+let x = 3;
+
+and the above works fine. So if I wanna use the x variable with the value of 2
+
+let y = x;
+
+what does the above x refer to? Is it the let x = 2 or let x = 3 and why. Thanks.

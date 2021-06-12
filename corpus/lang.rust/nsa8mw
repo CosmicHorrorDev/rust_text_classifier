@@ -1,0 +1,6 @@
+Rust never be capable to use in cuda properly? No shared memory concept makes rust incompatible?
+\_\_ shared\_\_ memory is extremely important in CUDA optimizations, and raw access to memory is incompatible with (safe) Rust.
+
+GPUs have a region of memory on their SMs (NVidia) or CUs (AMD) where data can be exchanged between CUDA threads at **extremely** high speeds / bandwidths. Furthermore, the pattern of accessing this shared memory is extremely complicated.
+
+Rust has **NO**  concept of shared memory, or how memory works at all. Furthermore, most  of Rust's safe memory / safe paradigms are straight up incompatible  with GPU programming. Ref-counted garbage collection is a **terrible**  idea in CUDA, and probably will never be efficient on a GPU platform.  (I bet that semispace or mark-and-sweep garbage-collection would be more  efficient on CUDA than Rust-style ref-counted)

@@ -1,0 +1,6 @@
+mini_markdown - A minimal markdown renderer
+Hey all, wanted to share a crate that I've been working on. First off, I know there are other markdown renderers out there and they are probably better unless you care about minimizing your dependencies. To that end mini_markdown is a zero dependency markdown renderer which supports a basic markdown syntax. I'm still adding features, but my personal goal has  mostly been met and it's basically code blocks with headings and safe output. Maybe that's all someone else needs too.  
+  
+Anyway, links are:  
+https://crates.io/crates/mini_markdown  
+https://github.com/darakian/mini_markdown

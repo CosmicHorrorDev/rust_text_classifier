@@ -1,0 +1,14 @@
+Multiple main() in same crate
+Hi all
+
+(Attention: a completely newbie here!)
+
+I'm trying to code some very simple utilities to help me manipulating source code from command line. (e.g. extracting headers from Java or Python sources)
+
+Most of these programs just pick a file from command line args, and after some checking, load its contents, calls a function and outputs the result.
+
+I can create a crate for each small program, of course, but I wonder if it is possible to define more than one main() in the same crate.
+
+So the question is: is it possible (and how) to define more than one main() in the same crate?
+
+Thanks in advance

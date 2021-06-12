@@ -1,0 +1,4 @@
+Full AndroidManifest API now in Rust
+Hey, guys! We just finished implementing AndroidManifest API in rust. Now library supports all features in the latest Android API level 30. We hope that this piece will make Rust Android support just a little better :)
+
+[https://github.com/dodorare/android-manifest-rs](https://github.com/dodorare/android-manifest-rs)

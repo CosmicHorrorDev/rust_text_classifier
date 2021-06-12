@@ -1,0 +1,42 @@
+macro_rules! and DSL -> Why does my "token" need brackets ()?
+`#![allow(unused_must_use)]`  
+`macro_rules! write_html {`  
+  `($w:expr, ) => (write!($w, "(0)"));`  
+  `($w:expr, $e:tt) => (write!($w, "(1) {}", $e));`
+
+  
+  `($w:expr, input ( $mark:tt ) $($rest:tt)* ) => {{`  
+`write!($w, "(4)data: {}", stringify!($mark));`  
+`write_html!($w, $($rest)*);`  
+  `}};`  
+`//working with nl()`  
+`($w:expr,nl() $($rest:tt)* ) => {{`  
+`write!($w, "(5)\n");`  
+`write_html!($w, $($rest)*);`  
+`}};`  
+`//same but without () its only working at beginning and in middle`  
+   `($w:expr,nl $($rest:tt)* ) => {{`  
+`write!($w, "(5)\n");`  
+`write_html!($w, $($rest)*);`  
+ `}};`  
+`}`  
+`fn main() {`  
+`use std::fmt::Write;`  
+`let mut out = String::new();`  
+`write_html!(&mut out,`  
+`nl     //<- OK`  
+`input (1u32)`  
+`nl   //<- Error but: nl() <-works ....`  
+`);`  
+`}`  
+
+
+I'm starting to dabble in macros. I'm probably too stupid to grasp the complexity, but I wanted to have a try at DSL with macros. Took the existing example on the rust example site and modified it a bit. In doing so, I run into an error that I can't quite explain.
+
+The idea is to define a command ("nl") that writes new-line to the stream. For my "definition" this command does not need any further tokens. Also no brackets "()", like `($w:expr,nl $($rest:tt)* )`
+
+Interestingly, my newly created nl-token works at the beginning and in the middle, but if I put this nl-token at the end of my DSL-language-script, then I'm getting an error. 
+
+However, if I pack brackets "()" into the pattern `($w:expr,nl() $($rest:tt)* )`, then the nl()-command works everywhere.
+
+Where is my thinking mistake?

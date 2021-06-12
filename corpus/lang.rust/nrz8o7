@@ -1,0 +1,6 @@
+FHIR + rust?
+I'm currently tasked with processing some FHIR data (just raw FHIR data, no need for any network API). As this is a greenfield project I'm tempted to use rust there. Unfortunately it seems as if there are hardly any libraries for FHIR in rust.
+
+I found [fhir-rs](https://github.com/ocrickard/fhir-rs) but that library did not see any activity for about a year (and the community seems to be pretty small in general). Otherwise there are some blog posts but no library I could extend and/or build on.
+
+Did anyone of you already worked with FHIR + rust? What is your experience? I'd like to avoid Java and C# at least for the core processing part (for validation I will probably use [HAPI FHIR](https://hapifhir.io/)).

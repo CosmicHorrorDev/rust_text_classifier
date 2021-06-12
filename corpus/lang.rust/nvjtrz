@@ -1,0 +1,4 @@
+Why does Rust require a "my_directory.rs" file when trying to use "my_directory/" as a module?
+Was reading this article: [https://hackernoon.com/including-files-and-deeply-directories-in-rust-q35o3yer](https://hackernoon.com/including-files-and-deeply-directories-in-rust-q35o3yer)
+
+Might have missed something in The Book, but I don't understand the background on this.

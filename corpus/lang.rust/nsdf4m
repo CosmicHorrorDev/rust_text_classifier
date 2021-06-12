@@ -1,0 +1,16 @@
+Current Cons in Rust, Workarounds, and Status?
+I keep coming back to Rust, and wanting to find more places to use it. I also enjoy reading about Rust, the philosophy behind it, and it's current state. Recently (a couple of weeks ago? Less?) someone posted a link to this blog post (https://www.figma.com/blog/rust-in-production-at-figma/) which listed a few cons to Rust. Since 2018 the world of Rust has changed so much, I'm wondering if any still hold true, or if there's anything new. I'm also expecting nothing is super surprising, and there's a plan for them. I'm curious to learn more.
+
+Here are the cons from the blog post:
+
+**Lifetimes are confusing.**
+I no longer find them so. But perhaps they've gotten even easier?
+
+**Errors are hard to debug.**
+How much of this is still true, really? What does debugging look like for you?
+
+**Many libraries are still early.**
+I felt this when I first started playing around with Rust. But I've also kept track and been impressed by the rapid growth of Rust's ecosystem. What is your take on this?
+
+**Asynchronous Rust is difficult**
+This has changed greatly, but perhaps there's something new and exciting to share here?

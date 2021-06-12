@@ -1,0 +1,53 @@
+how to share a TcpStream on every call (warp HTTP)
+I have a TlsStream  `stream: tokio_native_tls::TlsStream<tokio::net::TcpStream>`
+
+ I would like to use that connection on every call from a web service, for this, I am using warp, but the problem I have is that I can't clone the TcpStream, I am trying something like this;
+
+    
+    let arg = warp::any().map(move || stream.clone()); <---- 
+    
+    let my_route = warp::any().and(arg.clone()).and_then(my_handler);
+    warp::serve(my_route).run((addr, port)).await
+    
+    async fn state_handler(
+        stream: tokio_native_tls::TlsStream<tokio::net::TcpStream>,
+    ) -> Result<impl warp::Reply, warp::Rejection> {
+        Ok(StatusCode::OK)
+    }
+
+When using clone I get:
+
+    no method named `clone` found for struct `tokio_native_tls::TlsStream<tokio::net::TcpStream>` in the current scope
+    
+
+The code for obtaining the stream:
+
+&#x200B;
+
+    let stream = match timeout(Duration::from_secs(3),TcpStream::connect("192.168.1.11:3456")).await {
+            Ok(conn) => match conn {
+                Ok(conn) => match TlsConnector::from(redis.tls)
+                    .connect("192.168.1.11:3456", conn)
+                    .await
+                {
+                    Ok(s) => s,
+                    Err(e) => {
+                        eprintln!("{}", e);
+                        process::exit(1);
+                    }
+                },
+                Err(e) => {
+                    eprintln!("{}", e);
+                    process::exit(1);
+                }
+            },
+            Err(e) => {
+                eprintln!("Timeout :{}", e);
+                process::exit(1);
+            }
+        };
+    
+
+Any ideas about how could I pass the stream to the handler?
+
+I would like to prevent doing a connection on every call and instead use the existing connection.

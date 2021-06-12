@@ -1,0 +1,44 @@
+Why does the borrow checker accept a simple linked list traversal here but not a slightly more interesting one?
+Here's a simple linked list `append` function. This compiles and runs just fine:
+
+    #[derive(Clone, Debug)]
+    struct Node {
+        val: String,
+        next: Option<Box<Node>>,
+    }
+
+    fn append(mut spot: &mut Option<Box<Node>>, val: String) {
+        // Find the tail of the list.
+        while let Some(node) = spot {
+            spot = &mut node.next;
+        }
+        // Append val at the tail.
+        *spot = Some(Box::new(Node { val, next: None }));
+    }
+
+    fn main() {
+        // Just a quick example of what append() is doing.
+        let mut list = None;
+        append(&mut list, "foo".into());
+        append(&mut list, "bar".into());
+        dbg!(list); // "foo" -> "bar" -> None
+    }
+
+However, if I make `append` just a little more interesting, this doesn't compile:
+
+    fn append_or_maybe_overwrite(mut spot: &mut Option<Box<Node>>, val: String) {
+        // Find the tail of the list, or maybe stop at an earlier node.
+        while let Some(node) = spot {
+            if rand::thread_rng().gen_range(0..10) == 0 {
+                break;
+            }
+            spot = &mut node.next;
+        }
+        // This fails to compile with:
+        // error[E0506]: cannot assign to `*spot` because it is borrowed
+        *spot = Some(Box::new(Node { val, next: None }));
+    }
+
+Notably, if I `panic!()` instead of `break` in that non-compiling example, it's fixed again. It seems like Rust is happy as long as the loop _always_ overwrites `spot` (or returns early), but not if the loop _maybe_ overwrites it (and allows execution to continue). Is this a specific case of some more general limitation? Is there a workaround that doesn't involve stashing a mutable reference in an `Option`?
+
+[playground link for all of this](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=fc1191d81c478ce863c8db382fe6591c)
