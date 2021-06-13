@@ -5,13 +5,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.utils import Bunch
 
 from pathlib import Path
 from typing import Tuple, List
 import pickle
 
-from lib.datasets import PostsLoader
+from lib.datasets import Category, Posts, PostsLoader
 
 
 # TODO: store this in a config?
@@ -36,28 +35,31 @@ def score_classifier(*, training_percentage: float = 0.8) -> float64:
     test_set = loader.take()
 
     # TODO: switch this over to a log message once that's setup
-    print(f"Training set size: {len(training_set.data)}")
-    print(f"Test set size: {len(test_set.data)}")
+    print(f"Training set size: {len(training_set)}")
+    print(f"Test set size: {len(test_set)}")
 
     classifier = TextClassifier.from_training(training_set)
     return classifier.score(test_set)
 
 
 class TextClassifier:
-    categories: List[str]
+    categories: List[Category]
     classifier: GridSearchCV
 
-    def __init__(self, categories: List[str], classifier: GridSearchCV) -> None:
-        self.categories = categories
+    def __init__(self, categories: List[Category], classifier: GridSearchCV) -> None:
+        self.categories = list(categories)
         self.classifier = classifier
 
     @classmethod
-    def from_training(cls, training_set: Bunch) -> TextClassifier:
+    def from_training(cls, training_set: Posts) -> TextClassifier:
         return cls(
-            categories=training_set.target_names,
+            categories=list(Category),
             classifier=TextClassifier._from_training(training_set),
         )
 
+    # TODO: change this name to something like from_cached_else_train once error
+    # handling is actually working
+    # TODO: pass in the cache file location once config gets setup
     # TODO: pickle target categories as well?
     @classmethod
     def from_cached(cls, *, retrain: bool = False) -> TextClassifier:
@@ -72,7 +74,7 @@ class TextClassifier:
         else:
             grid_search_classifier = TextClassifier._load_model()
 
-        return cls(categories=loader.categories(), classifier=grid_search_classifier)
+        return cls(categories=list(Category), classifier=grid_search_classifier)
 
     @staticmethod
     def _load_model() -> GridSearchCV:
@@ -85,7 +87,7 @@ class TextClassifier:
             pickle.dump(grid_search_classifier, to_pickle)
 
     @staticmethod
-    def _from_training(training_set: Bunch) -> GridSearchCV:
+    def _from_training(training_set: Posts) -> GridSearchCV:
         # Setup a pipeline for the classifier
         # - Generates feature vectors using a count vectorizer
         # - Determines term frequency inverse document frequency
@@ -116,13 +118,13 @@ class TextClassifier:
         grid_search_classifier = GridSearchCV(
             classifier_pipeline, parameters, cv=5, n_jobs=-1
         )
-        return grid_search_classifier.fit(training_set.data, training_set.target)
+        return grid_search_classifier.fit(**training_set.as_data_target_kwargs())
 
-    def predict(self, text: str) -> Tuple[str, float64]:
+    def predict(self, text: str) -> Tuple[Category, float64]:
         category = self.categories[self.classifier.predict([text])[0]]
         probabilities = self.classifier.predict_proba([text])[0]
 
         return category, max(probabilities)
 
-    def score(self, test_set: Bunch) -> float64:
-        return self.classifier.score(test_set.data, test_set.target)
+    def score(self, test_set: Posts) -> float64:
+        return self.classifier.score(**test_set.as_data_target_kwargs())

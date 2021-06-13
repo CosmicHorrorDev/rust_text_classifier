@@ -1,33 +1,25 @@
 from __future__ import annotations
 
-from sklearn.utils import Bunch
 import numpy as np
 
 from enum import Enum
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple, Any
 import json
 import random
 
 
-class _Category(Enum):
-    LANG = "rust.lang"
-    GAME = "rust.game"
-
-    def to_target_name(self) -> str:
-        return self.value
+class Category(Enum):
+    LANG = 0
+    GAME = 1
 
     def to_target(self) -> int:
-        return list(_Category).index(self)
+        return self.value
 
     @classmethod
-    def default(cls) -> _Category:
-        return _Category.LANG
-
-    @staticmethod
-    def list_target_names() -> List[str]:
-        return [cat.to_target_name() for cat in list(_Category)]
+    def default(cls) -> Category:
+        return Category.LANG
 
 
 class Post:
@@ -51,7 +43,26 @@ class Post:
         return f"{self.title}\n{self.body}"
 
 
-Posts = List[Post]
+# `load_files` normally returns a `Bunch` which is weakly typed enough to make my skin
+# crawl, so instead we make our own class to represent a set of training data instead
+class Posts:
+    _category_post_pairs: List[Tuple[Category, Post]]
+
+    def __init__(self, category_post_pairs: List[Tuple[Category, Post]]) -> None:
+        self._category_post_pairs = category_post_pairs
+
+    def __len__(self) -> int:
+        return len(self._category_post_pairs)
+
+    def as_data_target_kwargs(self) -> Dict[str, Any]:
+        target_set = []
+        data_set = []
+        for (category, data) in self._category_post_pairs:
+            target_set.append(category.to_target())
+            data_set.append(data)
+        target_set = np.array(target_set)
+
+        return {"X": data_set, "y": target_set}
 
 
 # Lazily loads posts from their respective categories.
@@ -66,48 +77,33 @@ Posts = List[Post]
 # posts
 class PostsLoader:
     corpus_dir: Path
-    _posts_map: Optional[Dict[_Category, Posts]]
+    _posts_map: Optional[Dict[Category, List[Post]]]
 
     def __init__(self, corpus_dir: Path) -> None:
         self.corpus_dir = corpus_dir
         self._posts_map = None
 
-    def categories(self) -> List[str]:
-        return _Category.list_target_names()
-
     def num_entries(self) -> int:
         self._maybe_populate_posts_map()
         return sum([len(posts) for posts in self._posts_map.values()])
 
-    def take(self, amount: Optional[int] = None) -> Bunch:
+    def take(self, amount: Optional[int] = None) -> Posts:
         self._maybe_populate_posts_map()
         if amount is None or amount > self.num_entries():
             amount = self.num_entries()
 
-        target_to_data_pairs = []
+        category_to_data_pairs = []
         for category in self._posts_map:
-            target = category.to_target()
-
             # Trim off the desired number of entries
             posts = self._posts_map[category]
             split_off = posts[: (amount // 2)]
             self._posts_map[category] = posts[(amount // 2) :]
 
             for post in split_off:
-                target_to_data_pairs.append((target, str(post)))
+                category_to_data_pairs.append((category, str(post)))
 
-        random.shuffle(target_to_data_pairs)
-
-        target_set = []
-        data_set = []
-        for (target, data) in target_to_data_pairs:
-            target_set.append(target)
-            data_set.append(data)
-        target_set = np.array(target_set)
-
-        return Bunch(
-            data=data_set, target_names=_Category.list_target_names(), target=target_set
-        )
+        random.shuffle(category_to_data_pairs)
+        return Posts(category_to_data_pairs)
 
     def _maybe_populate_posts_map(self) -> None:
         if self._posts_map is None:
@@ -121,11 +117,11 @@ class PostsLoader:
             ), "Categories should have the same number of entries"
 
             self._posts_map = {
-                _Category.LANG: lang_posts,
-                _Category.GAME: game_posts,
+                Category.LANG: lang_posts,
+                Category.GAME: game_posts,
             }
 
-    def _load_lang_posts(self, limit: Optional[int] = None) -> Posts:
+    def _load_lang_posts(self, limit: Optional[int] = None) -> List[Post]:
         # Nothing complicated here, we just load from the lang post directory
         lang_dir = self.corpus_dir / "r_rust_correct"
 
@@ -133,7 +129,7 @@ class PostsLoader:
 
         return self._load_post_files(files, limit)
 
-    def _load_game_posts(self, limit: Optional[int] = None) -> Posts:
+    def _load_game_posts(self, limit: Optional[int] = None) -> List[Post]:
         # Slightly more compilicated since there are multiple sources. For this we
         # prefer reading from incorrect r/rust posts first, then after sample from all
         # the `equal_dirs`
@@ -157,7 +153,9 @@ class PostsLoader:
 
     # TODO: pass shuffle into here so that it can be shuffled after being limited?
     @staticmethod
-    def _load_post_files(post_files: List[Path], limit: Optional[int] = None) -> Posts:
+    def _load_post_files(
+        post_files: List[Path], limit: Optional[int] = None
+    ) -> List[Post]:
         if limit is None or limit > len(post_files):
             limit = len(post_files)
 
