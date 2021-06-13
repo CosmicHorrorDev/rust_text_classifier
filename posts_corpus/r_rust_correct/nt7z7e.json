@@ -1,0 +1,5 @@
+{
+    "id": "nt7z7e",
+    "title": "Is #[rustc_inherit_overflow_checks] safe for Wrapping?",
+    "selftext": "The standard library's implementations of Sum and Product for built-in integral types use a macro which injects #[rustc_inherit_overflow_checks] instead of relying on somebody else as I believe happened in earlier versions of accum.rs\n\nHowever, these days that same macro also implements Sum and Product for wrapping integers. Of course the wrapping integers can't overflow, and so never need such checks. It's unclear to me whether #[rustc_inherit_overflow_checks] is causing any harm here but it certainly doesn't make things clearer.\n\nIs it a problem? Or just makes the code a little murkier?"
+}

@@ -1,2 +1,0 @@
-Neovim setup to format Zola/Tera HTML (which nvim sees as htmldjango)? ALE, LSP, or something else?
-Hi, I'm trying to use nvim to edit Zola/Tera-formatted html, which nvim identifies as `htmldjango` (which neither ALE nor Neoformat know how to format with default configuration). First time using rust-anything but I was hoping I could, for now, get formatting working with pseudo-html for Zola. Anyone know best way to do this? TIA

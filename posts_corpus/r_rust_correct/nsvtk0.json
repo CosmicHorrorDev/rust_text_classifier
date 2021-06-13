@@ -1,0 +1,5 @@
+{
+    "id": "nsvtk0",
+    "title": "Your dev environment",
+    "selftext": "So I've been using rust for about a year now, and wouldn't call myself anything close to an expert, but it's my goto language of choice for most things now.\n\nI was curious to know what others are using for their dev environments. \n\nI'm currently switching between a Win10 laptop (ssh'd to a linux server) and a iMacPro using intellij, but was thinking of going for a 100% linux laptop... for a better bang for buck, and being able to code anywhere\n\nso.. I was wondering what other people use to do development on.. \n\nmost of my dev is react for the front end UI & rust for the back  (and rust for smart contracts).. \n\nThanks in advance."
+}

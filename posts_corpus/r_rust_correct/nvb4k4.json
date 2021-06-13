@@ -1,0 +1,5 @@
+{
+    "id": "nvb4k4",
+    "title": "Going from Option<&T> to Option<&dyn Trait>",
+    "selftext": "Hi,\n\nIt is generally forbidden to directly go from `Option<&T>` where `T: Foo + ?Sized` to `Option<&dyn Foo>`, as witnessed in an example:  https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=d7a78607520277fc3da441c7fc65f542 \n\nDoes anyone know of a way to work around this limitation? I effectively have a registry of non-generic functions taking `Option<&dyn Foo>` which need to be called from a generic function taking `Option<&T>`where `T: Foo + ?Sized`. The nature of this problem means I cannot change the non-generic part into a generic one. Is there any clean solution?"
+}

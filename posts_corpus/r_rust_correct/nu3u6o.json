@@ -1,0 +1,5 @@
+{
+    "id": "nu3u6o",
+    "title": "A question about &str and String, and their conversion",
+    "selftext": "Hello \\~ Everyone\\~\n\nI am new to the rust programing language and I have a question when reading \"The Book\"\n\nin this page : [https://doc.rust-lang.org/book/ch15-02-deref.html](https://doc.rust-lang.org/book/ch15-02-deref.html)\n\nin brief, the example source code is :\n\n&#x200B;\n\nhttps://preview.redd.it/3i5eaxtitr371.png?width=627&format=png&auto=webp&s=f3d42c6a6362fc17c5bb09d4c777b775b6f35c2f\n\nWhy does the compiler automatically add \"\\[..\\]\"  ?  \n\nThanks in advance \\~\\~\\~"
+}

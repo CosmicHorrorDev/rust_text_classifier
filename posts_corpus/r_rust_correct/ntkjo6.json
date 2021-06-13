@@ -1,0 +1,5 @@
+{
+    "id": "ntkjo6",
+    "title": "Anyone got AWS Lambda and Rust on an Apple mac m1 computer to work?",
+    "selftext": "The AWS Lamnda requires that the Rust app is built with x86\\_64-unknown-linux-musl and the cross compiler did not work before because GCC was not supporting M1 macs. From what I have read it now seems to work but I have yet to get a working example of building a rust app that works on as a AWS Lambda from a m1 mac. If anyone got it to work I would be extremely appreciated if you could share your recipe!"
+}

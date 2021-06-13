@@ -1,0 +1,5 @@
+{
+    "id": "ntg1fe",
+    "title": "Announcing Cameleon - A library for GenICam compatible industrial cameras",
+    "selftext": "Hi everyone! We are excited to announce the first release of [Cameleon](https://github.com/cameleon-rs/cameleon), which is a safe, fast, and flexible library for `GenICam` compatible industrial cameras.\nIf you are looking for an industrial camera library, please try it out!"
+}

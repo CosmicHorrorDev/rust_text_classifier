@@ -1,2 +1,0 @@
-How to shut down threads correctly?
-Hi im trying to make a series of GET requests using multithreading, and so far its working pretty well. However I can't seem to correctly shutdown the threads since there is an infinite loop inside of them. Thus when I run, the program just perma hangs even after my task is done. Can anyone suggest the proper way to fix this problem. My code is in the following GIST. https://gist.github.com/nlam1170/e1f40d22f01bfb0db1ef2a77bef9cf1b

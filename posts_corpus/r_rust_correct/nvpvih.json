@@ -1,0 +1,5 @@
+{
+    "id": "nvpvih",
+    "title": "Announcing geom3d 0.2 release",
+    "selftext": "[geom3d](https://github.com/J-F-Liu/geom3d) aims to be a CAD kernel for 3D geometric modeling. The first stage goal is to read CAD files and render geometric objects on screen. I'm statisfied with the current data type design. With this release it can already:\n\n- Read surfaces and curves from STEP file\n- Convert surfaces to triangle mesh and save as obj or stl\n- Convert curves to SVG paths and save to svg file\n\nThe next release will focus on implementing `trim(&self, edges: &[CurveSegment<Box<dyn Curve>>]) -> TriangleMesh` for varous surface types.\nHowever this is a mathematical hard problem for me, I haven't found a good reference book on this topic, I'm also seeking help about this here."
+}

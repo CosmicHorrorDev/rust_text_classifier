@@ -1,0 +1,5 @@
+{
+    "id": "nvc9ez",
+    "title": "Where can async not run?",
+    "selftext": "I'm working on a library and debating whether some of its functions should be async. In theory, even synchronous clients should be able to use async code by creating an async executor to execute library calls.\n\nWhat I'm wondering is: Are there any situations or execution environments where this isn't possible? I have some guesses, but maybe there are more?\n\n- Low-resource embedded environments in which the CPU or memory cost of async is too high\n- Environments like a kernel in which there are extra requirements about what kinds of execution modes are supported"
+}

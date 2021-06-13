@@ -1,0 +1,5 @@
+{
+    "id": "ns9xsr",
+    "title": "What does a Struct Return?",
+    "selftext": "So coming from the land of javascript into rust I want to make sure my understanding of Structs is accurate and I'm not mixing up concepts.   \n\n\nA struct is like a class?  \n\n\nimplementations are akin to how you add \"methods\" to the class  \n\n\nI'm not exactly sure what a struct returns when it's actually called by a variable... so if anyone knows what that is called I'd really appreciate knowing.   \n\n\nis there anything else I should know about structs in rust?"
+}

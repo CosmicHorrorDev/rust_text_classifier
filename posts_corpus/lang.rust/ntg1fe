@@ -1,3 +1,0 @@
-Announcing Cameleon - A library for GenICam compatible industrial cameras
-Hi everyone! We are excited to announce the first release of [Cameleon](https://github.com/cameleon-rs/cameleon), which is a safe, fast, and flexible library for `GenICam` compatible industrial cameras.
-If you are looking for an industrial camera library, please try it out!

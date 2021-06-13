@@ -1,0 +1,5 @@
+{
+    "id": "nsqixe",
+    "title": "0% gpu usage need help",
+    "selftext": " ok so i have been trying to fix this for awhile now. for some reason i cant get rust to use my gpu. i noticed it while i had nzxtcam up on my other monitor so i left that up while i did tons of changes like making everything run as admin in the files. i have changed tons of in game settings and settings in the nvidia control panel. ive made it use my gpu in my control panel and it still will not. the only fix ive found was to run the rust client in my files as admin then it starts to use all of my gpu, but when i run as admin it skips the easyanticheat start up and therefor doesnt let me join any servers. so finally im coming here to ask for help."
+}

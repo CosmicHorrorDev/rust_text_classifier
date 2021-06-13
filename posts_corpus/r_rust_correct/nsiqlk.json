@@ -1,0 +1,5 @@
+{
+    "id": "nsiqlk",
+    "title": "Thruster 1.1.2 Release - An express-like HTTP server in Rust",
+    "selftext": "Hello all, it's been quite a while! For the last year or so, I've been dogfooding and making small tweaks to [Thruster](https://github.com/thruster-rs/Thruster) and I've finally released [a pretty significant milestone](https://github.com/thruster-rs/Thruster/blob/master/RELEASE.md).\n\nSome highlights are:\n- Totally rebuilt route tree and parser\n- Totally rebuilt internal \"middleware\" system takes your list of middleware functions and combines them using closures\n- Easier to use middleware macro\n- Upgraded dependencies (yay!)\n\nSome fun metrics from using Thruster in production:\n- Over the past four months, it's handled 2.4 million requests\n- Instances have 0% framework related fatal errors\n- Average response time is well under 25ms for the 95th percentile\n- Average RAM used per instance is 14.75MB\n\nPlease enjoy! Also, if anyone is looking to get involved, I'd love a hand in updating our benchmarks on TechEmpower."
+}

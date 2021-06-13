@@ -1,0 +1,5 @@
+{
+    "id": "nsdsj9",
+    "title": "Suggestion - Rust+",
+    "selftext": "I was reading the change-log of the most recent update and noticed that have added IFTTT integration to rust+ and to be honest, I think it's great!  \n\n\nBut, I have some complains and suggestions.  \nFirst, I would really rather have more access, it would be nice if we were allowed some sort of API or node/pip package for event listeners, that way we aren't as limited as to what we could do regarding r+ events. Essentially we cannot create a discord bot using IFTTT, whereas if we had an API or node package we could.   \n\n\nThe second problem I have is that IFTTT costs money for certain features, and is obviously extremely limited. A maximum of 3 event listeners? Sure.  \n\n\nI would also like to see more events, like if a player kills your whilst your on a server, this would be nice for a discord bot that is tracking events like this and posting them into a clan or small group server."
+}

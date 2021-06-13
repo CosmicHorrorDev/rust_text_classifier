@@ -1,0 +1,5 @@
+{
+    "id": "nuyv2z",
+    "title": "what does mean some syntaxes",
+    "selftext": "i have just start learning rust with this 2 books [book 1](https://doc.rust-lang.org/book/ch05-02-example-structs.html) & [book rtlk](https://bfnightly.bracketproductions.com/rustbook/) and i stuck on two syntaxes i really don't understand :\n\n\n     struct VecStorage<T>(Vec<MaybeUninit<T>>)\nI don't find any explanation about this kind of struct declaration (this come from the [specs](https://docs.rs/specs/0.17.0/src/specs/storage/storages.rs.html#262-266) library).\n\n\n\n    gs.ecs.register::<Position>();\nthis line come from the [rltk-book](https://bfnightly.bracketproductions.com/rustbook/chapter_2.html) the double two points seems to mean it's a 'static' stuff, but what the hell does mean <type>() ?\nI don't find any explanation on this syntax either. ('register' definition can be find in [specs](https://docs.rs/specs/0.17.0/specs/trait.WorldExt.html#tymethod.register) library too)\n\n\nIt would be very nice if someone could explain to me."
+}

@@ -1,0 +1,5 @@
+{
+    "id": "nv8668",
+    "title": "Tool for detecting copy/paste code in Rust?",
+    "selftext": "Please can anyone point me to a tool that will find duplicate code segments in a Rust code base? A plugin for Intelli? or VSC or a command line tool would be fine."
+}

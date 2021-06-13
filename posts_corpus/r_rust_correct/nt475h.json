@@ -1,0 +1,5 @@
+{
+    "id": "nt475h",
+    "title": "FClones just got automatic file deduplication feature",
+    "selftext": "My fast duplicate file finder written in Rust has just become also a fast duplicate file remover! \n\nThis is probably the biggest release since many months.\n\n[https://github.com/pkolaczk/fclones/releases/tag/v0.12.0](https://github.com/pkolaczk/fclones/releases/tag/v0.12.0)"
+}

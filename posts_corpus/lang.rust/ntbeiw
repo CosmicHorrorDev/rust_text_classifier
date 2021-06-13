@@ -1,6 +1,0 @@
-Help finding methods in rustdoc
-Hi folks, I'm having a bit of trouble using the rustdoc and I was wondering if someone could give me some pointers.
-
-The specific issue I'm having is with this [ChaCha8Rng](https://rust-random.github.io/rand/rand_chacha/struct.ChaCha8Rng.html) struct doc. Now I know from a different document ([this one](https://rust-random.github.io/book/guide-start.html)) that the ChaCha8Rng has a method `gen` which can be used to generate random values, but I can't find it anywhere in the rustdoc. I know you have to click through traits to find all the methods available on a struct, but I can't seem to find it under any of those, either. Is there some other way that this ChaCha8Rng struct might be given the `gen` method?
-
-On a more general note, this is not the first time I've had trouble figuring out the API for a struct. Any general advice for finding what methods/fields are available?

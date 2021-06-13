@@ -1,24 +1,23 @@
 from __future__ import annotations
 
-from numpy import float64, ndarray
-from numpy.random import RandomState
-from sklearn.datasets import load_files
+from numpy import float64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
+from sklearn.utils import Bunch
 
 from pathlib import Path
 from typing import Tuple, List
 import pickle
+
+from lib.datasets import PostsLoader
 
 
 # TODO: store this in a config?
 MODEL_PATH = Path("text_model.pkl")
 
 
-# TODO: dedup logic around setting up the pipeline. This can be done when the classifier
-# gets multiple constructors setup
 # TODO: set this up to return more info if possible. Would be nice to see:
 # - Per category information
 # - Number of incorrect matches
@@ -30,25 +29,18 @@ def score_classifier(*, training_percentage: float = 0.8) -> float64:
         0.0 < training_percentage < 1.0
     ), "Percentage is represented as a float between 0.0 and 1.0"
 
-    # Load the training data
-    training_set = load_files(
-        "posts_corpus", shuffle=True, encoding="utf-8", random_state=RandomState()
-    )
+    loader = PostsLoader(Path("posts_corpus"))
 
-    split_index = int(len(training_set.data) * training_percentage)
-    classifier = TextClassifier.from_training(
-        training_set.target_names,
-        training_set.data[:split_index],
-        training_set.target[:split_index],
-    )
+    num_training_vals = int(loader.num_entries() * training_percentage)
+    training_set = loader.take(num_training_vals)
+    test_set = loader.take()
 
     # TODO: switch this over to a log message once that's setup
-    print(f"Training set size: {split_index}")
-    print(f"Test set size: {len(training_set.data) - split_index}")
+    print(f"Training set size: {len(training_set.data)}")
+    print(f"Test set size: {len(test_set.data)}")
 
-    return classifier.classifier.score(
-        training_set.data[split_index:], training_set.target[split_index:]
-    )
+    classifier = TextClassifier.from_training(training_set)
+    return classifier.score(test_set)
 
 
 class TextClassifier:
@@ -60,37 +52,27 @@ class TextClassifier:
         self.classifier = classifier
 
     @classmethod
-    def from_training(
-        cls, target_names: List[str], data: List[str], target: ndarray
-    ) -> TextClassifier:
+    def from_training(cls, training_set: Bunch) -> TextClassifier:
         return cls(
-            categories=target_names,
-            classifier=TextClassifier._from_training(data, target),
+            categories=training_set.target_names,
+            classifier=TextClassifier._from_training(training_set),
         )
 
+    # TODO: pickle target categories as well?
     @classmethod
     def from_cached(cls, *, retrain: bool = False) -> TextClassifier:
-        # TODO: switch this out for a custom function to load from multiple
-        # sources and to slim down reading just the category types
-        # - Pull from different sources
-        # - read equal number of rust game and rust lang posts
-        # - setup formatting the original json file on the fly
-        # TODO: pickle target categories as well?
-        # Load the training data
-        training_set = load_files("posts_corpus", shuffle=True, encoding="utf-8")
+        loader = PostsLoader(Path("posts_corpus"))
 
-        # Model is pickled when possible, so that we don't have to always retrain it
+        # Model is pickled when possible, so that we don't have to always retrain it.
+        # This method also avoids loading the files unless training is needed
         if not MODEL_PATH.is_file() or retrain:
-            grid_search_classifier = TextClassifier._from_training(
-                training_set.data, training_set.target
-            )
+            training_set = loader.take()
+            grid_search_classifier = TextClassifier._from_training(training_set)
             TextClassifier._store_model(grid_search_classifier)
         else:
             grid_search_classifier = TextClassifier._load_model()
 
-        return cls(
-            categories=training_set.target_names, classifier=grid_search_classifier
-        )
+        return cls(categories=loader.categories(), classifier=grid_search_classifier)
 
     @staticmethod
     def _load_model() -> GridSearchCV:
@@ -103,7 +85,7 @@ class TextClassifier:
             pickle.dump(grid_search_classifier, to_pickle)
 
     @staticmethod
-    def _from_training(data: List[str], target: ndarray) -> GridSearchCV:
+    def _from_training(training_set: Bunch) -> GridSearchCV:
         # Setup a pipeline for the classifier
         # - Generates feature vectors using a count vectorizer
         # - Determines term frequency inverse document frequency
@@ -134,10 +116,13 @@ class TextClassifier:
         grid_search_classifier = GridSearchCV(
             classifier_pipeline, parameters, cv=5, n_jobs=-1
         )
-        return grid_search_classifier.fit(data, target)
+        return grid_search_classifier.fit(training_set.data, training_set.target)
 
     def predict(self, text: str) -> Tuple[str, float64]:
         category = self.categories[self.classifier.predict([text])[0]]
         probabilities = self.classifier.predict_proba([text])[0]
 
         return category, max(probabilities)
+
+    def score(self, test_set: Bunch) -> float64:
+        return self.classifier.score(test_set.data, test_set.target)

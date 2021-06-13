@@ -1,6 +1,0 @@
-FClones just got automatic file deduplication feature
-My fast duplicate file finder written in Rust has just become also a fast duplicate file remover! 
-
-This is probably the biggest release since many months.
-
-[https://github.com/pkolaczk/fclones/releases/tag/v0.12.0](https://github.com/pkolaczk/fclones/releases/tag/v0.12.0)

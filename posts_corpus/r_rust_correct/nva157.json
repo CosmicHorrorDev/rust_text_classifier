@@ -1,0 +1,5 @@
+{
+    "id": "nva157",
+    "title": "Workspaces best practices, code organization",
+    "selftext": "While the Rust Book describes _how_ to use workspaces, it says little in terms of _why._ I know that there is no hard rule on how to best structure a project, but maybe there are some general good/bad practices? In which cases it makes sense to split a package into multiple ones? How should the dependency graph look like?\n\nMore specifically: I am writing a game in Rust, and I figured I want to separate the backend/game logic from the frontend. Should I divide them into two packages (a library and a binary, respectively)? The backend itself lends itself to be divided into multiple packages, each depending on the previous one (so the dependency graph is deeper than it's wide). Is that a good thing to do, or should all of that just belong to a single, large crate?"
+}

@@ -1,2 +1,0 @@
-Is Pathfinder (the graphics library) still being developed?
-All of the `pathfinder` crates except `pathfinder_simd` were last updated in December 2020, and the commit history in the Git repository since then is mostly bots automatically merging in security patches. Does this mean that development on `pathfinder` is slowing down / dead? If so, is there another library coming in to replace it?

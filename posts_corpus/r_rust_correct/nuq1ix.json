@@ -1,0 +1,5 @@
+{
+    "id": "nuq1ix",
+    "title": "What's your favourite under-rated Rust crate and why?",
+    "selftext": "For me it was [conread](https://github.com/kanidm/concread) having a set of concurrent data structures that works off a eventually consistent style strategy is just awsome for heavily concurrent code (most notably the lru cache replacement is awsome!) rather than having a lock(s) to achieve the same goal which can get stalled readers / writers."
+}

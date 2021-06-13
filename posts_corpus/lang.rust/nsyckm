@@ -1,2 +1,0 @@
-Best documented low-level Vulkan API wrapper?
-So I am trying to learn how to do low-level GPU programming for performance sensitive things, and I began by trying to use the Vulkano crate. However, the crate is rather poorly documented, and I was wondering whether the gfx-rs crate is a good replacement for it?

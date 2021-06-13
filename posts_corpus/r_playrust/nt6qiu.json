@@ -1,0 +1,5 @@
+{
+    "id": "nt6qiu",
+    "title": "How to 'zoom' in and lower your sensitivity at the same time by pressing one button",
+    "selftext": "Change the sensitivity part to your liking. Its not very good for close range.\n\nThis is the command.\n\nbind mouse1 \"+attack2;+input.sensitivity 1;input.sensitivity .6;+meta.if\\_true \"fov 70\";+meta.if\\_false \"fov 90\";\""
+}

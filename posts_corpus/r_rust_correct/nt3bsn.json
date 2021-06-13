@@ -1,0 +1,5 @@
+{
+    "id": "nt3bsn",
+    "title": "Understanding rust variable reassignment.",
+    "selftext": "Hello, fellow Rusteceans. I am a newbie to rust. I don't really understand how variable reassignment works yet.\n\nSo my question is this let's say I have a variable\n\nlet x = 2;\n\nI can't assign another value to x \n\nx = 3;\n\nthat is not possible, but I can do this\n\nlet x = 3;\n\nand the above works fine. So if I wanna use the x variable with the value of 2\n\nlet y = x;\n\nwhat does the above x refer to? Is it the let x = 2 or let x = 3 and why. Thanks."
+}

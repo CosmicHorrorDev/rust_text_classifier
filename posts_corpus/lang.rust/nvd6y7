@@ -1,8 +1,0 @@
-Common crates in Cargo workspace recompiled due to different features
-I have two binary crates in one workspace, both depending on a few library crates, which're also in the workspace. When I make a change to one of the libraries and rebuild the two binaries, both of them have to rebuild the common library. This is really making the edit-compile cycle slower. :(
-
-I've actually [posted about this before](https://www.reddit.com/r/rust/comments/cqceu4/common_crates_in_cargo_workspace_recompiled/) and found a solution there: figuring out which transitive dependencies have different features enabled between the two binaries. Sadly, the tools that worked a year ago don't anymore. [cargo-feature-analyst](https://github.com/psinghal20/cargo-feature-analyst) seemingly needs to handle Cargo.lock version 3, and [this cargo tree PR](https://github.com/sfackler/cargo-tree/pull/59) has deviated too far from the recent repo anymore. I've tried some workflows trying to diff `cargo tree -e features` between the two binaries, but haven't found the issue yet.
-
-Also, I haven't opted into the [new feature resolver](https://doc.rust-lang.org/cargo/reference/resolver.html#feature-resolver-version-2) yet, but I don't think that makes a difference in this case -- it's not a build dependency or target-specific problem.
-
-I'm guessing other people hit this problem; does anybody have some better techniques for finding the transitive dep with different features?

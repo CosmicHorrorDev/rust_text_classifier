@@ -1,0 +1,5 @@
+{
+    "id": "ntpi1a",
+    "title": "How to convert prost::Message to Vec<u8>?",
+    "selftext": "I'm brand new to rust and struggling to do something simple. I have protobuf messages I'm attempting to convert to `Vec<u8>` to store as values in etcd.\n\nLooking at the Prost build output, the structs derive `prost::Message`:\n\n`#[derive(Clone, PartialEq, ::prost::Message)]pub struct Entity {...}`\n\nFrom the docs, it appears I should use the encode method, but I'm receiving errors attempting to use any of the `prost::Message` methods on my Entity struct.\n\nI'm trying the following approach, but I receive \"no method named \\`encoded\\_length\\` found for struct \\`Entity\\`.\n\n`let mut buf = Vec::with_capacity(entity.encoded_length());`\n\n`entity.encode(&mut buf)`\n\nAm I missing something here?"
+}

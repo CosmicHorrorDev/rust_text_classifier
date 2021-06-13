@@ -1,0 +1,5 @@
+{
+    "id": "nt8ey1",
+    "title": "Traits bound for struct, tuples or enums",
+    "selftext": "I was wondering, is there some traits for types like Tuple or Struct, like there is for Closures (Fn) ? To be able to \"attach\" some methods on all Tuples or Structs or Enums.\n\nAs example\n\n    trait AutoNew {\n        fn new() -> Self;\n    }\n    impl<T: FieldStruct> AutoNew for T {\n        fn new() -> Self {\n            T {}  // That part only works for Field struct types\n        }\n    }"
+}

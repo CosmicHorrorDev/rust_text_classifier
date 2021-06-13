@@ -1,0 +1,5 @@
+{
+    "id": "nv0z68",
+    "title": "Is there a rust equivalent to ArchUnit?",
+    "selftext": "Hello,\n\nIn order to maintain large code bases with many contributors, architecture tests help to enforce a certain type of architecture and prevent nasty cyclic dependencies.\n\nIn Java and C# there is ArchUnit, which does this job more or less perfectly.\n\nI was wondering if there is an equivalent int rust?"
+}

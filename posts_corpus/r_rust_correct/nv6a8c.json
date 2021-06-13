@@ -1,0 +1,5 @@
+{
+    "id": "nv6a8c",
+    "title": "Using Electron with WASM",
+    "selftext": "I was looking at GUI options for Rust and tried out a couple of them this morning, but I couldn't really find one that was very complete. I was wondering though, what if I used Electron and a Rust WASM binary? What would the performance be on that versus a native GUI? I don't care about binary size, just resource consumption."
+}

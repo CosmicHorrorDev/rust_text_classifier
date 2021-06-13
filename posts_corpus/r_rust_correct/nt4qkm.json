@@ -1,0 +1,5 @@
+{
+    "id": "nt4qkm",
+    "title": "Rust and C++ Unit testing with cxx",
+    "selftext": "Hello all,\n\nI am currently working on a new repository where we have cxx setup with cargo build and I am wondering what the best way to run C++ unit tests would be (ideally from `cargo test`). We are flexible on what testing framework is used.\n\nRust tests are easy enough and testing of anything which is `extern \"C++\"` is just an extension of the Rust test framework, but specifically I am trying to figure out how to write C++ tests for C++ code and possibly for `extern \"Rust\"` integrations in C++ land."
+}

@@ -1,0 +1,5 @@
+{
+    "id": "nuypmd",
+    "title": "Is it an antipattern that the public class from the library has lifetime annotation with it?",
+    "selftext": "I am working on some library and it exposes some struct to the users that has lifetime annotations with it. In other words, it is defined in sth like\n\n    struct SomePublicStruct<'a> {\n  some_data: &'a SomeData\n    }\n\nso the users of SomePublicStruct may have to carry <'a> to use it.\n\nBut from my (short) experience from Rust, I have not seen a case where the library I had to use requires a lifetime annotation for it.\n\nIs it an anti-pattern that the public class from the library has lifetime annotation with it?"
+}
