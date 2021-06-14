@@ -23,6 +23,7 @@ MODEL_PATH = Path("text_model.pkl")
 # - Ability to set a threshhold along with reporting how many are ignored by it
 # TODO: use random state normally
 # TODO: setup tests for things
+# TODO: this should take a corpus dir
 def score_classifier(*, training_percentage: float = 0.8) -> float64:
     assert (
         0.0 < training_percentage < 1.0

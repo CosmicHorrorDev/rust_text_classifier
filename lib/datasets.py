@@ -59,7 +59,7 @@ class Posts:
         data_set = []
         for (category, data) in self._category_post_pairs:
             target_set.append(category.to_target())
-            data_set.append(data)
+            data_set.append(str(data))
         target_set = np.array(target_set)
 
         return {"X": data_set, "y": target_set}
@@ -100,7 +100,7 @@ class PostsLoader:
             self._posts_map[category] = posts[(amount // 2) :]
 
             for post in split_off:
-                category_to_data_pairs.append((category, str(post)))
+                category_to_data_pairs.append((category, post))
 
         random.shuffle(category_to_data_pairs)
         return Posts(category_to_data_pairs)
@@ -144,6 +144,7 @@ class PostsLoader:
             self.corpus_dir / "r_rustlfg",
         ]
 
+        # TODO: switch to sampling from sources evenly
         equal_files = []
         for equal_dir in equal_dirs:
             equal_files += [f for f in equal_dir.iterdir() if f.is_file()]

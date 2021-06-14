@@ -4,10 +4,10 @@ from lib import *
 
 
 def main() -> None:
-    print(f"Accuracy: {100 * score_classifier()}%")
-    # classifier = TextClassifier.from_cached()
-    # print(classifier.predict("2k hours, looking for a squad to raid with"))
-    # print(classifier.predict("What is the memory usage of String::new?"))
+    # print(f"Accuracy: {100 * score_classifier()}%")
+    classifier = TextClassifier.from_cached()
+    print(classifier.predict("2k hours, looking for a squad to raid with"))
+    print(classifier.predict("What is the memory usage of String::new?"))
 
 
 if __name__ == "__main__":
