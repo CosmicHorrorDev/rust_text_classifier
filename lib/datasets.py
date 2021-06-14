@@ -78,10 +78,14 @@ class Posts:
 class PostsLoader:
     corpus_dir: Path
     _posts_map: Optional[Dict[Category, List[Post]]]
+    # Taking an odd amount means popping an extra value off some category so to keep
+    # things fair this will be cycled between the two categories
+    _odd_take_lang: bool
 
     def __init__(self, corpus_dir: Path) -> None:
         self.corpus_dir = corpus_dir
         self._posts_map = None
+        self._odd_take_lang = False
 
     def num_entries(self) -> int:
         self._maybe_populate_posts_map()
@@ -91,6 +95,9 @@ class PostsLoader:
         self._maybe_populate_posts_map()
         if amount is None or amount > self.num_entries():
             amount = self.num_entries()
+
+        if amount < 0:
+            raise ValueError("Can only take non-negative amounts")
 
         category_to_data_pairs = []
         for category in self._posts_map:
@@ -102,7 +109,21 @@ class PostsLoader:
             for post in split_off:
                 category_to_data_pairs.append((category, post))
 
+        # Take an extra post from the correct category
+        if amount % 2 == 1:
+            if self._odd_take_lang:
+                category = Category.LANG
+            else:
+                category = Category.GAME
+
+            # Swap the one to take next
+            self._odd_take_lang = not self._odd_take_lang
+
+            extra_post = self._posts_map[category].pop()
+            category_to_data_pairs.append((category, extra_post))
+
         random.shuffle(category_to_data_pairs)
+        assert len(category_to_data_pairs) == amount
         return Posts(category_to_data_pairs)
 
     def _maybe_populate_posts_map(self) -> None:
