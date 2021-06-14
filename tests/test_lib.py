@@ -9,7 +9,7 @@ from tests.constants import SAMPLE_CORPUS_DIR
 # with such a small corpus, so failing twice in a row should be pretty rare
 @flaky
 def test_decent_scoring_accuracy():
-    score = score_classifier()
+    score = score_classifier(corpus_path=SAMPLE_CORPUS_DIR)
 
     assert score >= 0.9, (
         "Scores are generally around ~95% accurate with this sample set, so an average"

@@ -13,23 +13,17 @@ import pickle
 from lib.datasets import Category, Posts, PostsLoader
 
 
-# TODO: store this in a config?
-MODEL_PATH = Path("text_model.pkl")
-
-
 # TODO: set this up to return more info if possible. Would be nice to see:
 # - Per category information
 # - Number of incorrect matches
 # - Ability to set a threshhold along with reporting how many are ignored by it
 # TODO: use random state normally
-# TODO: setup tests for things
 # TODO: this should take a corpus dir
-def score_classifier(*, training_percentage: float = 0.8) -> float64:
-    assert (
-        0.0 < training_percentage < 1.0
-    ), "Percentage is represented as a float between 0.0 and 1.0"
+def score_classifier(*, corpus_path: Path, training_percentage: float = 0.8) -> float64:
+    if training_percentage > 1.0 or training_percentage < 0.0:
+        raise ValueError("Percentage is represented as a float between 0.0 and 1.0")
 
-    loader = PostsLoader(Path("posts_corpus"))
+    loader = PostsLoader(corpus_path)
 
     num_training_vals = int(loader.num_entries() * training_percentage)
     training_set = loader.take(num_training_vals)
@@ -52,43 +46,30 @@ class TextClassifier:
         self.classifier = classifier
 
     @classmethod
-    def from_training(cls, training_set: Posts) -> TextClassifier:
-        return cls(
-            categories=list(Category),
-            classifier=TextClassifier._from_training(training_set),
-        )
-
-    # TODO: change this name to something like from_cached_else_train once error
-    # handling is actually working
-    # TODO: pass in the cache file location once config gets setup
-    # TODO: pickle target categories as well?
-    @classmethod
-    def from_cached(cls, *, retrain: bool = False) -> TextClassifier:
-        loader = PostsLoader(Path("posts_corpus"))
-
-        # Model is pickled when possible, so that we don't have to always retrain it.
-        # This method also avoids loading the files unless training is needed
-        if not MODEL_PATH.is_file() or retrain:
+    def from_cache_file_else_train(
+        cls, *, cache_path: Path, corpus_path: Path
+    ) -> TextClassifier:
+        try:
+            classifier = TextClassifier.from_cache_file(cache_path)
+        except FileNotFoundError:
+            loader = PostsLoader(corpus_path)
             training_set = loader.take()
-            grid_search_classifier = TextClassifier._from_training(training_set)
-            TextClassifier._store_model(grid_search_classifier)
-        else:
-            grid_search_classifier = TextClassifier._load_model()
+            classifier = TextClassifier.from_training(training_set)
+
+            with cache_path.open("wb") as to_pickle:
+                pickle.dump(classifier.classifier, to_pickle)
+
+        return classifier
+
+    @classmethod
+    def from_cache_file(cls, cache_path: Path) -> TextClassifier:
+        with cache_path.open("rb") as pickled:
+            grid_search_classifier = pickle.load(pickled)
 
         return cls(categories=list(Category), classifier=grid_search_classifier)
 
-    @staticmethod
-    def _load_model() -> GridSearchCV:
-        with MODEL_PATH.open("rb") as pickled:
-            return pickle.load(pickled)
-
-    @staticmethod
-    def _store_model(grid_search_classifier: GridSearchCV) -> None:
-        with MODEL_PATH.open("wb") as to_pickle:
-            pickle.dump(grid_search_classifier, to_pickle)
-
-    @staticmethod
-    def _from_training(training_set: Posts) -> GridSearchCV:
+    @classmethod
+    def from_training(cls, training_set: Posts) -> TextClassifier:
         # Setup a pipeline for the classifier
         # - Generates feature vectors using a count vectorizer
         # - Determines term frequency inverse document frequency
@@ -116,10 +97,10 @@ class TextClassifier:
             "classifier__loss": ("log", "modified_huber"),
         }
 
-        grid_search_classifier = GridSearchCV(
-            classifier_pipeline, parameters, cv=5, n_jobs=-1
-        )
-        return grid_search_classifier.fit(**training_set.as_data_target_kwargs())
+        classifier = GridSearchCV(classifier_pipeline, parameters, cv=5, n_jobs=-1)
+        classifier = classifier.fit(**training_set.as_data_target_kwargs())
+
+        return cls(categories=list(Category), classifier=classifier)
 
     def predict(self, text: str) -> Tuple[Category, float64]:
         category = self.categories[self.classifier.predict([text])[0]]
