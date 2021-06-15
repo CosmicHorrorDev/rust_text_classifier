@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Tuple, List, Dict
 import pickle
 
-from lib.datasets import Category, Posts, PostsLoader
+from lib.classifier.datasets import Category, Posts, PostsLoader
 
 
 @dataclass

@@ -1,4 +1,4 @@
-from lib.datasets import PostsLoader
+from lib.classifier.datasets import PostsLoader
 from tests.constants import SAMPLE_CORPUS_DIR
 
 

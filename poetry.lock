@@ -167,10 +167,18 @@ category = "dev"
 optional = false
 python-versions = "*"
 
+[[package]]
+name = "xdg"
+version = "5.1.0"
+description = "Variables defined by the XDG Base Directory Specification"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ea89d0a018a6e745668bd1f3144deba853e9eb0fbbc2b891788d500ac81fc164"
+content-hash = "737f9a5adbd3caabe65f1e415510cac913d829c1eb9c76f2b8e95608e526b566"
 
 [metadata.files]
 atomicwrites = [
@@ -306,4 +314,8 @@ threadpoolctl = [
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
+]
+xdg = [
+    {file = "xdg-5.1.0-py3-none-any.whl", hash = "sha256:eb021156d2e1897e3cfe16bc0cd7aee6dd8157c8015a4cfbf4b495ed730226e6"},
+    {file = "xdg-5.1.0.tar.gz", hash = "sha256:3949564ca3c204e7a7fa72d85f55fb436c0e6108506e3eb61f3f4cf5be35deca"},
 ]

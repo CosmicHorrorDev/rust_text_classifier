@@ -1,7 +1,7 @@
 from flaky import flaky
 
-from lib import score_classifier, TextClassifier
-from lib.datasets import Category, PostsLoader
+from lib.classifier import score_classifier, TextClassifier
+from lib.classifier.datasets import Category, PostsLoader
 from tests.constants import SAMPLE_CORPUS_DIR
 
 
