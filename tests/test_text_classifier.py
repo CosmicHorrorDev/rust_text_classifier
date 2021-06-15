@@ -11,9 +11,6 @@ from tests.constants import SAMPLE_CORPUS_DIR
 def test_decent_scoring_accuracy():
     category_scores = score_classifier(corpus_path=SAMPLE_CORPUS_DIR)
 
-    print(category_scores)
-    assert False
-
     total_correct = 0
     total_incorrect = 0
     for score in category_scores.values():

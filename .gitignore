@@ -5,3 +5,4 @@ __pycache__
 .mypy_cache
 .hypothesis
 *.pkl
+/posts_corpus/
