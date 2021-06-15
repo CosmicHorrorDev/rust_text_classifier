@@ -6,20 +6,42 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 import pickle
 
 from lib.datasets import Category, Posts, PostsLoader
 
 
-# TODO: set this up to return more info if possible. Would be nice to see:
-# - Per category information
-# - Number of incorrect matches
-# - Ability to set a threshhold along with reporting how many are ignored by it
+@dataclass
+class ScoreData:
+    num_correct: int
+    num_incorrect: int
+    num_ignored: int
+
+    def __init__(self) -> None:
+        self.num_correct = 0
+        self.num_incorrect = 0
+        self.num_ignored = 0
+
+    def inc_correct(self) -> None:
+        self.num_correct += 1
+
+    def inc_incorrect(self) -> None:
+        self.num_incorrect += 1
+
+    def inc_ignored(self) -> None:
+        self.num_ignored += 1
+
+
 # TODO: use random state normally
-# TODO: this should take a corpus dir
-def score_classifier(*, corpus_path: Path, training_percentage: float = 0.8) -> float64:
+def score_classifier(
+    *,
+    corpus_path: Path,
+    training_percentage: float = 0.8,
+    prediction_threshold: float = 0.5,
+) -> Dict[Category, ScoreData]:
     if training_percentage > 1.0 or training_percentage < 0.0:
         raise ValueError("Percentage is represented as a float between 0.0 and 1.0")
 
@@ -34,7 +56,27 @@ def score_classifier(*, corpus_path: Path, training_percentage: float = 0.8) -> 
     print(f"Test set size: {len(test_set)}")
 
     classifier = TextClassifier.from_training(training_set)
-    return classifier.score(test_set)
+    predictions = classifier.predict_set(test_set.as_data())
+
+    score_data = {}
+    for category in Category:
+        score_data[category] = ScoreData()
+
+    # Gather the results for the predictions
+    for ((pred_category, pred_prob), (real_category, _)) in zip(
+        predictions, test_set.category_post_pairs
+    ):
+        correct_prediction = pred_category == real_category
+
+        if pred_prob < prediction_threshold:
+            score_data[real_category].inc_ignored()
+        else:
+            if correct_prediction:
+                score_data[real_category].inc_correct()
+            else:
+                score_data[real_category].inc_incorrect()
+
+    return score_data
 
 
 class TextClassifier:
@@ -107,6 +149,13 @@ class TextClassifier:
         probabilities = self.classifier.predict_proba([text])[0]
 
         return category, max(probabilities)
+
+    def predict_set(self, texts: List[str]) -> List[Tuple[Category, float64]]:
+        results = []
+        for text in texts:
+            results.append(self.predict(text))
+
+        return results
 
     def score(self, test_set: Posts) -> float64:
         return self.classifier.score(**test_set.as_data_target_kwargs())

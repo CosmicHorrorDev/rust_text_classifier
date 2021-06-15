@@ -9,9 +9,19 @@ from tests.constants import SAMPLE_CORPUS_DIR
 # with such a small corpus, so failing twice in a row should be pretty rare
 @flaky
 def test_decent_scoring_accuracy():
-    score = score_classifier(corpus_path=SAMPLE_CORPUS_DIR)
+    category_scores = score_classifier(corpus_path=SAMPLE_CORPUS_DIR)
 
-    assert score >= 0.9, (
+    print(category_scores)
+    assert False
+
+    total_correct = 0
+    total_incorrect = 0
+    for score in category_scores.values():
+        total_correct += score.num_correct
+        total_incorrect += score.num_incorrect
+
+    overall_score = total_correct / (total_correct + total_incorrect)
+    assert overall_score >= 0.9, (
         "Scores are generally around ~95% accurate with this sample set, so an average"
         " of 90% should be reasonable"
     )

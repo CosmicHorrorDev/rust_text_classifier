@@ -46,23 +46,31 @@ class Post:
 # `load_files` normally returns a `Bunch` which is weakly typed enough to make my skin
 # crawl, so instead we make our own class to represent a set of training data instead
 class Posts:
-    _category_post_pairs: List[Tuple[Category, Post]]
+    category_post_pairs: List[Tuple[Category, Post]]
 
     def __init__(self, category_post_pairs: List[Tuple[Category, Post]]) -> None:
-        self._category_post_pairs = category_post_pairs
+        self.category_post_pairs = category_post_pairs
 
     def __len__(self) -> int:
-        return len(self._category_post_pairs)
+        return len(self.category_post_pairs)
 
-    def as_data_target_kwargs(self) -> Dict[str, Any]:
-        target_set = []
+    def as_data(self) -> List[str]:
         data_set = []
-        for (category, data) in self._category_post_pairs:
-            target_set.append(category.to_target())
+        for (_, data) in self.category_post_pairs:
             data_set.append(str(data))
+
+        return data_set
+
+    def as_target(self) -> np.ndarray:
+        target_set = []
+        for (category, _) in self.category_post_pairs:
+            target_set.append(category.to_target())
         target_set = np.array(target_set)
 
-        return {"X": data_set, "y": target_set}
+        return target_set
+
+    def as_data_target_kwargs(self) -> Dict[str, Any]:
+        return {"X": self.as_data(), "y": self.as_target()}
 
 
 # Lazily loads posts from their respective categories.
