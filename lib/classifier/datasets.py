@@ -14,8 +14,12 @@ class Category(Enum):
     LANG = 0
     GAME = 1
 
-    def to_target(self) -> int:
+    def as_target(self) -> int:
         return self.value
+
+    @classmethod
+    def from_target(cls, target: int) -> Category:
+        return list(Category)[target]
 
     @classmethod
     def default(cls) -> Category:
@@ -64,7 +68,7 @@ class Posts:
     def as_target(self) -> np.ndarray:
         target_set = []
         for (category, _) in self.category_post_pairs:
-            target_set.append(category.to_target())
+            target_set.append(category.as_target())
         target_set = np.array(target_set)
 
         return target_set
