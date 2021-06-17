@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Tuple, Optional, Union
-from pathlib import Path
 import sqlite3
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional, Tuple, Union
 
 from lib.classifier.datasets import Category
 

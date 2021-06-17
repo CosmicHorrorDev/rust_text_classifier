@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import numpy as np
-
+import json
+import random
 from enum import Enum
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Optional, List, Dict, Tuple, Any
-import json
-import random
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 
 
 class Category(Enum):

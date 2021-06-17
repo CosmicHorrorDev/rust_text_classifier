@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+import pickle
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Tuple
+
 from numpy import float64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Tuple, List, Dict
-import pickle
 
 from lib.classifier.datasets import Category, Posts, PostsLoader
 
@@ -50,10 +50,6 @@ def score_classifier(
     num_training_vals = int(loader.num_entries() * training_percentage)
     training_set = loader.take(num_training_vals)
     test_set = loader.take()
-
-    # TODO: switch this over to a log message once that's setup
-    print(f"Training set size: {len(training_set)}")
-    print(f"Test set size: {len(test_set)}")
 
     classifier = TextClassifier.from_training(training_set)
     predictions = classifier.predict_set(test_set.as_data())

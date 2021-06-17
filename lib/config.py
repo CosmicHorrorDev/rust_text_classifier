@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from xdg import xdg_cache_home, xdg_config_home, xdg_data_home
-
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
-import json
 
+from xdg import xdg_cache_home, xdg_config_home, xdg_data_home
 
 DIR_NAME = "rust_text_classifier"
 
