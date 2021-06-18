@@ -38,11 +38,11 @@ class Config:
             contents = json.load(file_handle)
 
         self._praw_config = PrawConfig(
-            client_id=contents["praw"]["client_id"],
-            client_secret=contents["praw"]["client_secret"],
-            user_agent=contents["praw"]["user_agent"],
-            username=contents["praw"]["username"],
-            password=contents["praw"]["password"],
+            client_id=contents["reddit"]["client_id"],
+            client_secret=contents["reddit"]["client_secret"],
+            user_agent=contents["reddit"]["user_agent"],
+            username=contents["reddit"]["username"],
+            password=contents["reddit"]["password"],
         )
         self._posts_db = data_dir() / "posts.db"
 

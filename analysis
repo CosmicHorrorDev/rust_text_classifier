@@ -22,38 +22,43 @@ def print_row(entries: List[Any]) -> None:
 def main() -> None:
     lang_scores = []
     game_scores = []
-    for _ in tqdm(range(500)):
-        score = score_classifier(corpus_path=Path("posts_corpus"))
-        lang_scores.append(score[Category.LANG])
-        game_scores.append(score[Category.GAME])
+    for i in range(5, 8):
+        threshold = i / 10
+        for _ in tqdm(range(100)):
+            score = score_classifier(
+                corpus_path=Path("posts_corpus"), prediction_threshold=threshold
+            )
+            lang_scores.append(score[Category.LANG])
+            game_scores.append(score[Category.GAME])
 
-    print_row([" ", "correct", "incorrect", "ignored"])
+        print(f"Threshold: {threshold}")
+        print_row([" ", "correct", "incorrect", "ignored"])
 
-    lang_num_correct = sum([s.num_correct for s in lang_scores])
-    lang_num_incorrect = sum([s.num_incorrect for s in lang_scores])
-    lang_num_ignored = sum([s.num_ignored for s in lang_scores])
-    lang_total = lang_num_correct + lang_num_incorrect + lang_num_ignored
-    print_row(
-        [
-            "lang",
-            percent_str(lang_num_correct / lang_total),
-            percent_str(lang_num_incorrect / lang_total),
-            percent_str(lang_num_ignored / lang_total),
-        ]
-    )
+        lang_num_correct = sum([s.num_correct for s in lang_scores])
+        lang_num_incorrect = sum([s.num_incorrect for s in lang_scores])
+        lang_num_ignored = sum([s.num_ignored for s in lang_scores])
+        lang_total = lang_num_correct + lang_num_incorrect + lang_num_ignored
+        print_row(
+            [
+                "lang",
+                percent_str(lang_num_correct / lang_total),
+                percent_str(lang_num_incorrect / lang_total),
+                percent_str(lang_num_ignored / lang_total),
+            ]
+        )
 
-    game_num_correct = sum([s.num_correct for s in game_scores])
-    game_num_incorrect = sum([s.num_incorrect for s in game_scores])
-    game_num_ignored = sum([s.num_ignored for s in game_scores])
-    game_total = game_num_correct + game_num_incorrect + game_num_ignored
-    print_row(
-        [
-            "game",
-            percent_str(game_num_correct / game_total),
-            percent_str(game_num_incorrect / game_total),
-            percent_str(game_num_ignored / game_total),
-        ]
-    )
+        game_num_correct = sum([s.num_correct for s in game_scores])
+        game_num_incorrect = sum([s.num_incorrect for s in game_scores])
+        game_num_ignored = sum([s.num_ignored for s in game_scores])
+        game_total = game_num_correct + game_num_incorrect + game_num_ignored
+        print_row(
+            [
+                "game",
+                percent_str(game_num_correct / game_total),
+                percent_str(game_num_incorrect / game_total),
+                percent_str(game_num_ignored / game_total),
+            ]
+        )
 
 
 if __name__ == "__main__":
