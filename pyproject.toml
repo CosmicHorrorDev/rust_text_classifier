@@ -10,7 +10,6 @@ python = "^3.8"
 numpy = "^1.20.3"
 scikit-learn = "^0.24.2"
 tqdm = "^4.61.1"
-xdg = "^5.1.0"
 
 [tool.poetry.dev-dependencies]
 # Testing

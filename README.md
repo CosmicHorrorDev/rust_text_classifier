@@ -22,6 +22,17 @@ environment_
 
 ### Required Configuration
 
+This repo is essentially assumed to be installed under
+`/opt/rust_text_classifier` with only one required change being
+
+- A config file called `config.json` (`sample_config.json` acts as a template)
+
+If desired a different `posts_corpus` can be used and several files will be
+automatically generated
+
+- `posts.db` simply keeps track of classifications on posts
+- `text_classifier.pkl` which is a pickled form of the classifier to avoid having to retrain each time the program is launched
+
 The bot expects:
  - A config file at `$XDG_CONFIG_HOME/rust_text_analyzer/config.json`
    - `sample_config.json` is an example config with all the required fields
@@ -35,13 +46,14 @@ handling dependencies and virtual environments. With poetry installed getting
 all the dependencies setup and then running the bot is as simple as running the
 following from the project dir
 
-<!-- TODO: mention alternate installation methods as well? -->
-<!-- TODO: the venv instruction below is for a dev environment -->
-
 ```bash
-poetry install --no-root  # Only need to do this once
+poetry install --no-dev  # Only need to do this once
 poetry run ./bot  # Uses the virtual environment created above
 ```
+
+Alternatively you can use your system's package manager, or you can manually
+use pip to install the dependencies (I don't think it supports reading from
+`pyproject.toml` yet, but I could be wrong.
 
 ## Analysis
 
