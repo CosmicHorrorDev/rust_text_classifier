@@ -12,7 +12,7 @@ from lib.config import Config
 
 COMMENT_TEMPLATE = (
     "Hello! It looks like this post is _likely_ about the Rust video game"
-    " ({100 * probability:.2f}%) while this sub is for the"
+    " ({percent_probability:.2f}%) while this sub is for the"
     " [Rust Programming Language](https://www.rust-lang.org) instead."
     "\n\nIf this post is about the Rust video game then feel free to use one of the"
     " related subreddits (be sure to read the subreddit rules first)"
@@ -84,8 +84,9 @@ def run(config: Config, args: Args) -> None:
 
                 # New post so time to classify it
                 category, probability = classifier.predict(f"{title}\n{body}")
+                percent_probability = 100 * probability
                 print(
-                    f"Classified - {category} ({100 * probability:.2f}%) -"
+                    f"Classified - {category} ({percent_probability:.2f}%) -"
                     f" {truncated_title}"
                 )
 
@@ -106,7 +107,9 @@ def run(config: Config, args: Args) -> None:
                 # Add a comment if it looks like the post is about the game
                 print(f"Replying - {truncated_title}")
                 daily_comment_total += 1
-                submission.reply(COMMENT_TEMPLATE.format(probability=probability))
+                submission.reply(
+                    COMMENT_TEMPLATE.format(percent_probability=percent_probability)
+                )
         except Exception:
             exception_traceback = traceback.format_exc()
             print(exception_traceback)
