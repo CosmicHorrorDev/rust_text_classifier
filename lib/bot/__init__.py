@@ -1,8 +1,8 @@
 import traceback
+from datetime import datetime, timedelta
 from time import sleep
 
 from praw import Reddit
-from praw.models import Submission
 
 from lib.bot.db import PostsDb, PostsEntry
 from lib.classifier import TextClassifier
@@ -10,11 +10,31 @@ from lib.classifier.datasets import Category
 from lib.cli import Args
 from lib.config import Config
 
+COMMENT_TEMPLATE = (
+    "Hello! It looks like this post is _likely_ about the Rust video game"
+    " ({100 * probability:.2f}%) while this sub is for the"
+    " [Rust Programming Language](https://www.rust-lang.org) instead."
+    "\n\nIf this post is about the Rust video game then feel free to use one of the"
+    " related subreddits (be sure to read the subreddit rules first)"
+    "\n\n* r/playrust"
+    "\n* r/rustconsole"
+    "\n* r/rustlfg"
+    "\n* r/playrustservers"
+    "\n\nIf this post _is_ actually about the Rust Programming Language then congratz"
+    " on being part of the lucky ~2% of posts that get incorrectly classified! 🎉"
+    "\n\n[source](https://github.com/LovecraftianHorror/rust_text_classifier)"
+    " | [author](https://www.reddit.com/message/compose/?to=KhorneLordOfChaos)"
+    " | [sponsor](https://github.com/sponsors/LovecraftianHorror)"
+)
 
-# TODO: switch all the `print` things over to logging
+
 def run(config: Config, args: Args) -> None:
-    print("Starting the reddit bot")
+    ONE_DAY = timedelta(days=1)
 
+    daily_comment_total = 0
+    daily_marker = datetime.now()
+
+    print("Starting the reddit bot")
     print("Setting up the r/rust submission stream")
     reddit = Reddit(**config.as_praw_auth_kwargs())
     subreddit = reddit.subreddit("rust")
@@ -27,7 +47,6 @@ def run(config: Config, args: Args) -> None:
     classifier = TextClassifier.from_cache_file_else_train(
         cache_path=config.cached_classifier_path(), corpus_path=config.posts_corpus()
     )
-    threshold = config.cutoff_threshold()
 
     print("Beginning the event loop")
     # Event loop goes as follows:
@@ -41,66 +60,53 @@ def run(config: Config, args: Args) -> None:
     while True:
         sleep(30)
 
+        # Reset daily comment limit if needed
+        if (datetime.now() - daily_marker) >= ONE_DAY:
+            daily_comment_total = 0
+            daily_marker = datetime.now()
+
         try:
             for submission in submission_stream:
-                handle_submission(
-                    submission,
-                    classifier,
-                    posts_db,
-                    config.cutoff_threshold(),
-                    args.dont_comment,
+                id = submission.id
+                title = submission.title
+                truncated_title = title[:40]
+                body = submission.selftext
+
+                if not submission.is_self:
+                    # We only care about self (aka text) posts
+                    print(f"Ignored - Non-text post - {truncated_title}")
+                    continue
+
+                if posts_db.find(submission.id) is not None:
+                    # Ignore posts that we've already seen
+                    print(f"Ignored - Already in db - {truncated_title}")
+                    continue
+
+                # New post so time to classify it
+                category, probability = classifier.predict(f"{title}\n{body}")
+                print(
+                    f"Classified - {category} ({100 * probability:.2f}%) -"
+                    f" {truncated_title}"
                 )
+
+                # Add the new entry to the database
+                posts_db.insert(PostsEntry(id, category, float(probability)))
+
+                if daily_comment_total > config.daily_comment_limit():
+                    continue
+
+                if args.dont_comment:
+                    print("Ignored - Passive mode")
+                    continue
+
+                if category != Category.GAME or probability < config.cutoff_threshold():
+                    print("Ignored - Post below threshold")
+                    continue
+
+                # Add a comment if it looks like the post is about the game
+                print(f"Replying - {truncated_title}")
+                daily_comment_total += 1
+                submission.reply(COMMENT_TEMPLATE.format(probability=probability))
         except Exception:
             exception_traceback = traceback.format_exc()
             print(exception_traceback)
-
-
-def handle_submission(
-    submission: Submission,
-    classifier: TextClassifier,
-    posts_db: PostsDb,
-    threshold: float,
-    dont_comment: bool,
-) -> None:
-    id = submission.id
-    title = submission.title
-    truncated_title = title[:40]
-    body = submission.selftext
-
-    if not submission.is_self:
-        # We only care about self (aka text) posts
-        print(f"Ignored - Non-text post - {truncated_title}")
-        return
-
-    if posts_db.find(submission.id) is not None:
-        # Ignore posts that we've already seen
-        print(f"Ignored - Already in db - {truncated_title}")
-        return
-
-    # New post so time to classify it
-    category, probability = classifier.predict(f"{title}\n{body}")
-    print(f"Classified - {category} ({100 * probability:.2f}%) - {truncated_title}")
-
-    # Add the new entry to the database
-    posts_db.insert(PostsEntry(id, category, float(probability)))
-
-    # Add a comment if it looks like the post is about the game
-    if not dont_comment and category == Category.GAME and probability >= threshold:
-        print(f"Replying - {truncated_title}")
-        submission.reply(
-            "Hello! It looks like this post is _likely_ about the Rust videogame"
-            f" ({100 * probability:.2f}%) while this sub is for the"
-            " [Rust Programming Language](https://www.rust-lang.org) instead."
-            "\n\nIf this post is about the Rust video game then feel free to use one of"
-            " the related subreddits (be sure to read the subreddit rules first)"
-            "\n\n* r/playrust"
-            "\n* r/rustconsole"
-            "\n* r/rustlfg"
-            "\n* r/playrustservers"
-            "\n\nIf this post is _actually_ about the Rust Programming Language then"
-            " congratz on being part of the lucky ~2% of posts that get incorrectly"
-            " classified! 🎉"
-            "\n\n[source](https://github.com/LovecraftianHorror/rust_text_classifier)"
-            " | [author](https://www.reddit.com/message/compose/?to=KhorneLordOfChaos)"
-            " | [sponsor](https://github.com/sponsors/LovecraftianHorror)"
-        )

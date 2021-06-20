@@ -8,6 +8,7 @@ from typing import Dict
 BASE_DIR = Path("/") / "opt" / "rust_text_classifier"
 
 
+@dataclass
 class Config:
     # Reddit stuff
     _praw_config: PrawConfig
@@ -16,10 +17,10 @@ class Config:
     _posts_corpus: Path
     _cached_classifier_path: Path
     _cutoff_threshold: float
+    # Bot stuff
+    _daily_post_limit: int
 
-    def __init__(self) -> None:
-        config_path = BASE_DIR / "config.json"
-
+    def __init__(self, config_path: Path = BASE_DIR / "config.json") -> None:
         with config_path.open() as file_handle:
             contents = json.load(file_handle)
 
@@ -30,11 +31,13 @@ class Config:
             username=contents["reddit"]["username"],
             password=contents["reddit"]["password"],
         )
-        self._posts_db = BASE_DIR / "posts.db"
 
-        self._cutoff_threshold = contents["classifier"]["cutoff_threshold"]
+        self._posts_db = BASE_DIR / "posts.db"
         self._cached_classifier_path = BASE_DIR / "text_classifier.pkl"
         self._posts_corpus = BASE_DIR / "posts_corpus"
+
+        self._cutoff_threshold = contents["cutoff_threshold"]
+        self._daily_comment_limit = contents["daily_comment_limit"]
 
     def as_praw_auth_kwargs(self) -> Dict[str, str]:
         return self._praw_config.as_auth_kwargs()
@@ -50,6 +53,9 @@ class Config:
 
     def cutoff_threshold(self) -> float:
         return self._cutoff_threshold
+
+    def daily_comment_limit(self) -> int:
+        return self._daily_comment_limit
 
 
 @dataclass

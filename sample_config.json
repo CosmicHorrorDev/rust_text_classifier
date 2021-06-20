@@ -6,7 +6,6 @@
 	"username": "REDDIT_USERNAME",
 	"password": "REDDIT_PASSWORD"
     },
-    "classifier": {
-	    "cutoff_threshold": 0.5
-    }
+    "cutoff_threshold": 0.5,
+    "daily_comment_limit": 5
 }

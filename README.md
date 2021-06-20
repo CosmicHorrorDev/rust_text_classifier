@@ -1,6 +1,6 @@
 # Rust Text Classifier
 
-_Current Incarnation:
+_Current Manifestation:
 [u/AutoShadow0133](https://www.reddit.com/user/AutoShadow0133/)_
 
 A Reddit bot powered by a text classifier for determining if text is about the
