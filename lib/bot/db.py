@@ -55,6 +55,12 @@ class PostsDb:
 
     @classmethod
     def create(cls, db_path: Union[str, Path]) -> PostsDb:
+        # Ignore special case
+        if db_path != ":memory:":
+            # Create directory if needed
+            db_path = Path(db_path)
+            db_path.parent.mkdir(exist_ok=True, parents=True)
+
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         cursor.executescript(

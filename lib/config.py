@@ -9,8 +9,6 @@ from xdg import xdg_cache_home, xdg_config_home, xdg_data_home
 
 DIR_NAME = "rust_text_classifier"
 
-# TODO: make the `config_dir`, `data_dir`, and `cache_dir` folders in `Config`
-
 
 def config_dir() -> Path:
     return xdg_config_home() / DIR_NAME
@@ -34,6 +32,10 @@ class Config:
     _cutoff_threshold: float
 
     def __init__(self) -> None:
+        cache_dir().mkdir(exist_ok=True, parents=True)
+        config_dir().mkdir(exist_ok=True, parents=True)
+        data_dir().mkdir(exist_ok=True, parents=True)
+
         config_path = config_dir() / "config.json"
 
         with config_path.open() as file_handle:

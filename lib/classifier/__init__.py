@@ -95,6 +95,7 @@ class TextClassifier:
             classifier = TextClassifier.from_training(training_set)
 
             with cache_path.open("wb") as to_pickle:
+                cache_path.parent.mkdir(exist_ok=True, parents=True)
                 pickle.dump(classifier.classifier, to_pickle)
 
         return classifier
