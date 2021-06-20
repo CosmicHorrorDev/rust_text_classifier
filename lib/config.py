@@ -18,7 +18,7 @@ class Config:
     _cached_classifier_path: Path
     _cutoff_threshold: float
     # Bot stuff
-    _daily_post_limit: int
+    _daily_comment_limit: int
 
     def __init__(self, config_path: Path = BASE_DIR / "config.json") -> None:
         with config_path.open() as file_handle:

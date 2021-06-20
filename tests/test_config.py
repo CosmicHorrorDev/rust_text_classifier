@@ -25,6 +25,6 @@ def test_config() -> None:
 
     ideal._cutoff_threshold = 0.5
 
-    ideal._daily_post_limit = 5
+    ideal._daily_comment_limit = 5
 
     assert ideal == config
