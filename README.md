@@ -1,5 +1,8 @@
 # Rust Text Classifier
 
+_Current Incarnation:
+[u/AutoShadow0133](https://www.reddit.com/user/AutoShadow0133/)_
+
 A Reddit bot powered by a text classifier for determining if text is about the
 [videogame Rust](https://rust.facepunch.com) or the
 [programming language Rust](https://www.rust-lang.org)
@@ -33,12 +36,6 @@ automatically generated
 - `posts.db` simply keeps track of classifications on posts
 - `text_classifier.pkl` which is a pickled form of the classifier to avoid having to retrain each time the program is launched
 
-The bot expects:
- - A config file at `$XDG_CONFIG_HOME/rust_text_analyzer/config.json`
-   - `sample_config.json` is an example config with all the required fields
- - A posts corpus at `$XDG_DATA_HOME/rust_text_analyzer/posts_corpus`
-   - A sample corpus is provided in the repo (I personally use a larger one, but am not sure where it would make sense to host)
-
 ### Dependencies
 
 This project uses [`poetry`](https://github.com/python-poetry/poetry) for
@@ -53,7 +50,7 @@ poetry run ./bot  # Uses the virtual environment created above
 
 Alternatively you can use your system's package manager, or you can manually
 use pip to install the dependencies (I don't think it supports reading from
-`pyproject.toml` yet, but I could be wrong.
+`pyproject.toml` yet, but I could be wrong)
 
 ## Analysis
 
