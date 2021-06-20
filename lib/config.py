@@ -9,6 +9,8 @@ from xdg import xdg_cache_home, xdg_config_home, xdg_data_home
 
 DIR_NAME = "rust_text_classifier"
 
+# TODO: make the `config_dir`, `data_dir`, and `cache_dir` folders in `Config`
+
 
 def config_dir() -> Path:
     return xdg_config_home() / DIR_NAME
@@ -46,7 +48,7 @@ class Config:
         )
         self._posts_db = data_dir() / "posts.db"
 
-        self._classification_threshold = contents["classifier"]["cutoff_threshold"]
+        self._cutoff_threshold = contents["classifier"]["cutoff_threshold"]
         self._cached_classifier_path = cache_dir() / "text_classifier.pkl"
         self._posts_corpus = data_dir() / "posts_corpus"
 

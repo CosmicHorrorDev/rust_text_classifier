@@ -38,7 +38,7 @@ class PostsDb:
     @classmethod
     def from_file_else_create(cls, db_path: Path) -> PostsDb:
         try:
-            db = cls.create(db_path)
+            db = cls.from_file(db_path)
         except FileNotFoundError:
             db = cls.create(db_path)
 

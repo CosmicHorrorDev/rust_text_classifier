@@ -35,6 +35,9 @@ handling dependencies and virtual environments. With poetry installed getting
 all the dependencies setup and then running the bot is as simple as running the
 following from the project dir
 
+<!-- TODO: mention alternate installation methods as well? -->
+<!-- TODO: the venv instruction below is for a dev environment -->
+
 ```bash
 poetry install --no-root  # Only need to do this once
 poetry run ./bot  # Uses the virtual environment created above
