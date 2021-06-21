@@ -2,7 +2,7 @@
     "reddit": {
         "client_id": "REDDIT_CLIENT_ID",
 	"client_secret": "REDDIT_CLIENT_SECRET",
-	"user_agent": "Rust Text Classifier Bot by /u/KhorneLordOfChaos v0.1.0 https://github.com/LovecraftianHorror/rust_text_classifier",
+	"user_agent": "Rust Text Classifier Bot by /u/KhorneLordOfChaos v0.2.0 https://github.com/LovecraftianHorror/rust_text_classifier",
 	"username": "REDDIT_USERNAME",
 	"password": "REDDIT_PASSWORD"
     },
