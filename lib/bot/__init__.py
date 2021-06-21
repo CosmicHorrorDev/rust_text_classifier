@@ -93,7 +93,8 @@ def run(config: Config, args: Args) -> None:
                 # Add the new entry to the database
                 posts_db.insert(PostsEntry(id, category, float(probability)))
 
-                if daily_comment_total > config.daily_comment_limit():
+                if daily_comment_total >= config.daily_comment_limit():
+                    print(f"Ignored - Comment limit hit till {daily_marker + ONE_DAY}")
                     continue
 
                 if args.dont_comment:

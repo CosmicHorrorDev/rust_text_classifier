@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from lib.config import BASE_DIR, Config, PrawConfig
 from tests.constants import REPO_DIR
 
@@ -24,7 +22,6 @@ def test_config() -> None:
     ideal._posts_corpus = BASE_DIR / "posts_corpus"
 
     ideal._cutoff_threshold = 0.5
-
     ideal._daily_comment_limit = 5
 
     assert ideal == config
