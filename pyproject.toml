@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rust_text_classifier"
-version = "0.2.0"
+version = "0.2.1"
 description = "[WIP] Determine if text is about the Rust game or Rust programming language"
 authors = ["Lovecraftian Horror <LovecraftianHorror@pm.me>"]
 

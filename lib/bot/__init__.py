@@ -18,7 +18,7 @@ COMMENT_TEMPLATE = (
     " related subreddits (be sure to read the subreddit rules first)"
     "\n\n* r/playrust"
     "\n* r/rustconsole"
-    "\n* r/rustlfg"
+    "\n* r/playrustlfg"
     "\n* r/playrustservers"
     "\n\nIf this post _is_ actually about the Rust Programming Language then congratz"
     " on being part of the lucky ~2% of posts that get incorrectly classified! 🎉"
