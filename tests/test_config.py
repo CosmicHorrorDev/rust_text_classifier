@@ -10,7 +10,7 @@ def test_config() -> None:
         "REDDIT_CLIENT_ID",
         "REDDIT_CLIENT_SECRET",
         (
-            "Rust Text Classifier Bot by /u/KhorneLordOfChaos v0.2.0"
+            "Rust Text Classifier Bot by /u/KhorneLordOfChaos v0.2.1"
             " https://github.com/LovecraftianHorror/rust_text_classifier"
         ),
         "REDDIT_USERNAME",
