@@ -15,6 +15,7 @@ tqdm = "^4.61.1"
 # Testing
 flaky = "^3.7.0"
 pytest = "^5.2"
+toml = "0.10.2"
 
 # Linters and Formatting
 black = "^21.6b0"

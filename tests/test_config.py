@@ -1,3 +1,4 @@
+from lib import __version__
 from lib.config import BASE_DIR, Config, PrawConfig
 from tests.constants import REPO_DIR
 
@@ -10,7 +11,7 @@ def test_config() -> None:
         "REDDIT_CLIENT_ID",
         "REDDIT_CLIENT_SECRET",
         (
-            "Rust Text Classifier Bot by /u/KhorneLordOfChaos v0.2.1"
+            f"Rust Text Classifier Bot by /u/KhorneLordOfChaos v{__version__}"
             " https://github.com/LovecraftianHorror/rust_text_classifier"
         ),
         "REDDIT_USERNAME",
