@@ -115,7 +115,7 @@ class TextClassifier:
         # - Classifies using a linear SVM
         classifier_pipeline = Pipeline(
             [
-                ("frequency_vectorizer", TfidfVectorizer()),
+                ("frequency_vectorizer", TfidfVectorizer(stop_words="english")),
                 (
                     "classifier",
                     SGDClassifier(
