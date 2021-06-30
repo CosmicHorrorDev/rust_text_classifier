@@ -59,7 +59,7 @@ def score_classifier(
         score_data[category] = ScoreData()
 
     # Gather the results for the predictions
-    for ((pred_category, pred_prob), (real_category, _)) in zip(
+    for ((pred_category, pred_prob), (real_category, text)) in zip(
         predictions, test_set.category_post_pairs
     ):
         correct_prediction = pred_category == real_category
@@ -70,6 +70,11 @@ def score_classifier(
             if correct_prediction:
                 score_data[real_category].inc_correct()
             else:
+                if real_category == Category.LANG and prediction_threshold == 0.7:
+                    print()
+                    print(text.id)
+                    print()
+
                 score_data[real_category].inc_incorrect()
 
     return score_data

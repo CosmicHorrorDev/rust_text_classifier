@@ -54,6 +54,8 @@ use pip to install the dependencies (I don't think it supports reading from
 
 ## Analysis
 
+<!-- TODO: update this to talk about the new corpus -->
+
 _Note: The classifier always uses an equal number of posts from each category,
 so even though there are more posts about the game available it will only
 select enough to match the posts about the lang_

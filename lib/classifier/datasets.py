@@ -29,10 +29,12 @@ class Category(Enum):
 class Post:
     title: str
     body: str
+    id: str
 
-    def __init__(self, title: str, body: str) -> None:
+    def __init__(self, title: str, body: str, id: str) -> None:
         self.title = title
         self.body = body
+        self.id = id
 
     @classmethod
     def from_file_handle(cls, file_handle: TextIOWrapper) -> Post:
@@ -41,6 +43,7 @@ class Post:
         return cls(
             title=contents["title"],
             body=contents["selftext"],
+            id=contents["id"],
         )
 
     def __str__(self) -> str:

@@ -20,9 +20,9 @@ def print_row(entries: List[Any]) -> None:
 
 
 def main() -> None:
-    lang_scores = []
-    game_scores = []
     for i in range(5, 8):
+        lang_scores = []
+        game_scores = []
         threshold = i / 10
         for _ in tqdm(range(100)):
             score = score_classifier(
