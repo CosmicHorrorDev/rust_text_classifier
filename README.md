@@ -54,8 +54,6 @@ use pip to install the dependencies (I don't think it supports reading from
 
 ## Analysis
 
-<!-- TODO: update this to talk about the new corpus -->
-
 _Note: The classifier always uses an equal number of posts from each category,
 so even though there are more posts about the game available it will only
 select enough to match the posts about the lang_
@@ -66,20 +64,18 @@ and then tests the accuracy using the remaining 20% of the posts. This test is
 run 100 times with the values for each category being averaged together and
 reported. This is repeated using `50%`, `60%`, and `70%` as the threshold.
 
-Running these tests locally with a corpus of 222 Rust Lang posts and ~500 Rust
-Game posts to choose from gets the values reported below which indicated that
-even the most liberal threshold (`50%`) would inaccurately flag less than 2% of
-Rust Lang posts as being about the Game, while managing to detect over 97% of
-Rust Game posts accurately.
+The current corpus I'm using is a set of 400 removed r/rust posts along with
+400 r/rust posts about the lang (Big thanks to the moderators for helping me
+get access to relevant removed posts)
 
-| Category | Threshold | Correct | Incorrect | Ignored |
-| :---: | :---: | :---: | :---: | :---: |
-| Lang | 50% | 98.29% | 1.71% | 0.00% |
-| Game | 50% | 97.52% | 2.48% | 0.00% |
-| Lang | 60% | 96.12% | 1.07% | 2.81% |
-| Game | 60% | 92.41% | 1.53% | 6.06% |
-| Lang | 70% | 90.80% | 0.74% | 8.46% |
-| Game | 70% | 84.14% | 1.03% | 14.83% |
+|Category|Threshold|Correct|Incorrect|Ignored|
+|:---:|:---:|:---:|:---:|:---:|
+|Lang|50%|97.20%|2.80%|0.00%|
+|Game|50%|95.07%|4.93%|0.00%|
+|Lang|60%|91.24%|0.89%|7.87%|
+|Game|60%|85.89%|1.91%|12.20%|
+|Lang|70%|75.38%|0.26%|24.37%|
+|Game|70%|64.96%|1.01%|34.02%|
 
 ## Notes on Posts Corpus
 

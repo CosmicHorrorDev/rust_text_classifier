@@ -70,11 +70,6 @@ def score_classifier(
             if correct_prediction:
                 score_data[real_category].inc_correct()
             else:
-                if real_category == Category.LANG and prediction_threshold == 0.7:
-                    print()
-                    print(text.id)
-                    print()
-
                 score_data[real_category].inc_incorrect()
 
     return score_data
