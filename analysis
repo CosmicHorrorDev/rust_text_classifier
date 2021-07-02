@@ -8,6 +8,10 @@ from tqdm import tqdm
 from lib.classifier import score_classifier
 from lib.classifier.datasets import Category
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 def percent_str(f: float) -> str:
     return f"{100 * f:0.2f}%"
@@ -19,7 +23,8 @@ def print_row(entries: List[Any]) -> None:
     print()
 
 
-def main() -> None:
+def main() -> List:
+    hist = []
     for i in range(5, 8):
         lang_scores = []
         game_scores = []
@@ -60,6 +65,38 @@ def main() -> None:
             ]
         )
 
+        lang = [n / lang_total for n in [lang_num_correct, lang_num_incorrect, lang_num_ignored]]
+        game = [n / game_total for n in [game_num_correct, game_num_incorrect, game_num_ignored]]
+        hist.append(["lang", threshold] + lang)
+        hist.append(["game", threshold] + game)
+
+    return hist
+
+
+def plot_results(hist) -> None:
+    df = pd.DataFrame(hist, columns=['class', 'thresh', 'correct', 'incorrect', 'ignored'])
+
+    # * set styles
+    sns.set(style="ticks", context="paper")
+
+    # * Generate cummulative values
+    df['incorrect'] += df['correct']
+    df['ignored'] += df['incorrect']
+
+    # * Create labels to divide stacked bars
+    df['label'] = [f"{row['class']}: {row['thresh']}" for _, row in df.iterrows()]
+
+    # * Overlay cummulative values to create a stacked plot (order matters!)
+    p = sns.barplot(data=df, x='label', color='slategrey', y='ignored')
+    sns.barplot(data=df, x='label', color='tomato', y='incorrect')
+    sns.barplot(data=df, x='label', color='seagreen', y='correct')
+
+    # * Set labels and title
+    p.set(xlabel="Threshold", ylabel="%", title='Accuracy of each Class over Thresholds')
+
+    plt.show()
+
 
 if __name__ == "__main__":
-    main()
+    hist = main()
+    plot_results(hist)
