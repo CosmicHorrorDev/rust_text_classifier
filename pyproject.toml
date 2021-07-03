@@ -5,11 +5,17 @@ description = "[WIP] Determine if text is about the Rust game or Rust programmin
 authors = ["Lovecraftian Horror <LovecraftianHorror@pm.me>"]
 
 [tool.poetry.dependencies]
+# Used exclusively in `analysis`
+matplotlib = "^3.4.0"
+pandas = "1.2.0"
+seaborn = "^0.11.0"
+tqdm = "^4.61.1"
+
+# Used for the bot
+numpy = "^1.20.3"
 praw = "^7.3.0"
 python = "^3.8"
-numpy = "^1.20.3"
 scikit-learn = "^0.24.2"
-tqdm = "^4.61.1"
 
 [tool.poetry.dev-dependencies]
 # Testing
