@@ -1,3 +1,4 @@
+import logging
 import traceback
 from datetime import datetime, timedelta
 from time import sleep
@@ -34,21 +35,21 @@ def run(config: Config, args: Args) -> None:
     daily_comment_total = 0
     daily_marker = datetime.now()
 
-    print("Starting the reddit bot")
-    print("Setting up the r/rust submission stream")
+    logging.info("Starting the reddit bot")
+    logging.info("Setting up the r/rust submission stream")
     reddit = Reddit(**config.as_praw_auth_kwargs())
     subreddit = reddit.subreddit("rust")
     submission_stream = subreddit.stream.submissions()
 
-    print("Connecting to the old posts database")
+    logging.info("Connecting to the posts database")
     posts_db = PostsDb.from_file_else_create(config.posts_db())
 
-    print("Setting up the text classifier")
+    logging.info("Setting up the text classifier")
     classifier = TextClassifier.from_cache_file_else_train(
         cache_path=config.cached_classifier_path(), corpus_path=config.posts_corpus()
     )
 
-    print("Beginning the event loop")
+    logging.info("Beginning the event loop")
     # Event loop goes as follows:
     # 1. Read all text posts from r/rust
     # 2. For each text post
@@ -62,6 +63,7 @@ def run(config: Config, args: Args) -> None:
 
         # Reset daily comment limit if needed
         if (datetime.now() - daily_marker) >= ONE_DAY:
+            logging.debug("Resetting the daily comment limit")
             daily_comment_total = 0
             daily_marker = datetime.now()
 
@@ -74,18 +76,18 @@ def run(config: Config, args: Args) -> None:
 
                 if not submission.is_self:
                     # We only care about self (aka text) posts
-                    print(f"Ignored - Non-text post - {truncated_title}")
+                    logging.debug(f"Ignored - Non-text post - {truncated_title}")
                     continue
 
                 if posts_db.find(submission.id) is not None:
                     # Ignore posts that we've already seen
-                    print(f"Ignored - Already in db - {truncated_title}")
+                    logging.debug(f"Ignored - Already in db - {truncated_title}")
                     continue
 
                 # New post so time to classify it
                 category, probability = classifier.predict(f"{title}\n{body}")
                 percent_probability = 100 * probability
-                print(
+                logging.info(
                     f"Classified - {category} ({percent_probability:.2f}%) -"
                     f" {truncated_title}"
                 )
@@ -94,23 +96,25 @@ def run(config: Config, args: Args) -> None:
                 posts_db.insert(PostsEntry(id, category, float(probability)))
 
                 if daily_comment_total >= config.daily_comment_limit():
-                    print(f"Ignored - Comment limit hit till {daily_marker + ONE_DAY}")
+                    logging.info(
+                        f"Ignored - Comment limit hit till {daily_marker + ONE_DAY}"
+                    )
                     continue
 
                 if args.dont_comment:
-                    print("Ignored - Passive mode")
+                    logging.debug("Ignored - Passive mode")
                     continue
 
                 if category != Category.GAME or probability < config.cutoff_threshold():
-                    print("Ignored - Post below threshold")
+                    logging.debug("Ignored - Post below threshold")
                     continue
 
                 # Add a comment if it looks like the post is about the game
-                print(f"Replying - {truncated_title}")
+                logging.info(f"Replying - {truncated_title}")
                 daily_comment_total += 1
                 submission.reply(
                     COMMENT_TEMPLATE.format(percent_probability=percent_probability)
                 )
         except Exception:
             exception_traceback = traceback.format_exc()
-            print(exception_traceback)
+            logging.warning(exception_traceback)

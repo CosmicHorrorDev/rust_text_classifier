@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import logging
+from pathlib import Path
+
 from lib import bot
 from lib.cli import Args
 from lib.config import Config
@@ -8,6 +11,17 @@ from lib.config import Config
 def main() -> None:
     args = Args()
     config = Config()
+
+    # TODO: setup the log files to rotate
+    log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    log_level = log_levels[min(len(log_levels) - 1, args.verbose)]
+    log_file_path = Path("/") / "var" / "log" / "reddit_text_bot.log"
+    logging.basicConfig(
+        format="[%(asctime)s] %(levelname)s: %(message)s",
+        level=log_level,
+        # Log to a log file and stderr
+        handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()],
+    )
 
     bot.run(config, args)
 
