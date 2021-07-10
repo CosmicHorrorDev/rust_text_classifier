@@ -71,6 +71,11 @@ def run(config: Config, args: Args) -> None:
 
         try:
             for submission in submission_stream:
+                # `None` is returned after each set of submissions so use that as the
+                # signal to break out
+                if submission is None:
+                    break
+
                 id = submission.id
                 title = submission.title
                 truncated_title = title[:40]
