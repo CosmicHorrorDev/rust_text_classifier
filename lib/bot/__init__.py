@@ -22,7 +22,7 @@ COMMENT_TEMPLATE = (
     "\n* r/playrustlfg"
     "\n* r/playrustservers"
     "\n\nIf this post _is_ actually about the Rust Programming Language then congratz"
-    " on being part of the lucky few of posts that get incorrectly classified! 🎉"
+    " on being part of the lucky few posts that get incorrectly classified! 🎉"
     "\n\n[source](https://github.com/LovecraftianHorror/rust_text_classifier)"
     " | [author](https://www.reddit.com/message/compose/?to=KhorneLordOfChaos)"
     " | [sponsor](https://github.com/sponsors/LovecraftianHorror)"

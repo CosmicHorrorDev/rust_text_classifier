@@ -5,7 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class Args:
     dont_comment: bool
-    verbose: int
+    log: str
 
     def __init__(self) -> None:
         parser = ArgumentParser(
@@ -19,16 +19,14 @@ class Args:
             help="Just passively observe all the posts instead of leaving any comments",
             action="store_true",
         )
-        # Default verbosity to INFO
         parser.add_argument(
-            "--verbose",
-            "-v",
+            "--log",
             help="Increase logging verbosity",
-            action="count",
-            default=1,
+            action="store",
+            default="INFO",
         )
 
         args = parser.parse_args()
 
         self.dont_comment = args.dont_comment
-        self.verbose = args.verbose
+        self.log = args.log.upper()

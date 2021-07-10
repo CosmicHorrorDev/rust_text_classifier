@@ -12,16 +12,16 @@ def main() -> None:
     args = Args()
     config = Config()
 
-    # TODO: setup the log files to rotate
-    log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    log_level = log_levels[min(len(log_levels) - 1, args.verbose)]
+    LOG_LEVELS = ["DEBUG", "INFO", "INFO", "WARNING", "CRITICAL"]
+    assert args.log in LOG_LEVELS, f"Use a valid log level: {LOG_LEVELS}"
     log_file_path = Path("/") / "var" / "log" / "reddit_text_bot.log"
     logging.basicConfig(
         format="[%(asctime)s] %(levelname)s: %(message)s",
-        level=log_level,
+        level=args.log,
         # Log to a log file and stderr
         handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()],
     )
+    logging.info(f"Logging level: {args.log}")
 
     bot.run(config, args)
 
