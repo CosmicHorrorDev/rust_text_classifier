@@ -39,7 +39,9 @@ def run(config: Config, args: Args) -> None:
     logging.info("Setting up the r/rust submission stream")
     reddit = Reddit(**config.as_praw_auth_kwargs())
     subreddit = reddit.subreddit("rust")
-    submission_stream = subreddit.stream.submissions()
+    # A negative value for `pause_after` will cause the stream to stop after each
+    # iteration which allows for doing bookkeeping tasks while listening to a stream
+    submission_stream = subreddit.stream.submissions(pause_after=-1)
 
     logging.info("Connecting to the posts database")
     posts_db = PostsDb.from_file_else_create(config.posts_db())
