@@ -2,6 +2,7 @@ import logging
 import traceback
 from datetime import datetime, timedelta
 from time import sleep
+from typing import List
 
 from praw import Reddit
 
@@ -29,19 +30,36 @@ COMMENT_TEMPLATE = (
 )
 
 
+# Just a simple cache to store IDs for this session which sits in front of the check on
+# the database to help relieve strain
+class IdCache:
+    ids: List[str]
+    ID_LIMIT: int = 40
+
+    def __init__(self) -> None:
+        self.ids = []
+
+    def contains(self, needle: str) -> bool:
+        return needle in self.ids
+
+    def push(self, new_id: str) -> None:
+        self.ids = [new_id] + self.ids
+        while len(self.ids) > self.ID_LIMIT:
+            self.ids.pop()
+
+
 def run(config: Config, args: Args) -> None:
+    SUBMISSION_FETCH_LIMIT = 20
     ONE_DAY = timedelta(days=1)
 
     daily_comment_total = 0
     daily_marker = datetime.now()
+    id_cache = IdCache()
 
     logging.info("Starting the reddit bot")
     logging.info("Setting up the r/rust submission stream")
     reddit = Reddit(**config.as_praw_auth_kwargs())
     subreddit = reddit.subreddit("rust")
-    # A negative value for `pause_after` will cause the stream to stop after each
-    # iteration which allows for doing bookkeeping tasks while listening to a stream
-    submission_stream = subreddit.stream.submissions(pause_after=-1)
 
     logging.info("Connecting to the posts database")
     posts_db = PostsDb.from_file_else_create(config.posts_db())
@@ -53,42 +71,48 @@ def run(config: Config, args: Args) -> None:
 
     logging.info("Beginning the event loop")
     # Event loop goes as follows:
-    # 1. Read all text posts from r/rust
-    # 2. For each text post
-    #   a. Check if the post is already in the database. If so then skip
-    #   b. Run the classifier on the title and body
-    #   c. Add the entry to the posts database
-    #   d. Comment on the post if it seems like it's about the game
-    # 3. Delay then return to step 1.
+    # 1. Perform any possible housekeeping tasks
+    # 2. Read the <SUBMISSION_FETCH_LIMIT> latest posts from /r/rust
+    # 3. For each text post
+    #   a. Check if the post is in the session cache. If so then skip
+    #   b. Check if the post is already in the database. If so then skip
+    #   c. Run the classifier on the title and body
+    #   d. Add the entry to the posts database
+    #   e. Comment on the post if it seems like it's about the game
+    # 4. Delay then return to step 1.
     while True:
         sleep(30)
 
         # Reset daily comment limit if needed
         if (datetime.now() - daily_marker) >= ONE_DAY:
-            logging.debug("Resetting the daily comment limit")
+            logging.info("Resetting the daily comment limit")
             daily_comment_total = 0
             daily_marker = datetime.now()
 
         try:
-            for submission in submission_stream:
-                # `None` is returned after each set of submissions so use that as the
-                # signal to break out
-                if submission is None:
-                    break
-
+            # /r/rust is a pretty low traffic subreddit so a limit of just 20 should be
+            # more than enough
+            for submission in subreddit.new(limit=SUBMISSION_FETCH_LIMIT):
                 id = submission.id
+
+                if id_cache.contains(id):
+                    continue
+
+                # I _think_ that submissions are fetched lazily so we avoid actually
+                # fetching them by only reading this data after we're already past the
+                # session ID cache
                 title = submission.title
                 truncated_title = title[:40]
                 body = submission.selftext
 
-                if not submission.is_self:
-                    # We only care about self (aka text) posts
-                    logging.debug(f"Ignored - Non-text post - {truncated_title}")
-                    continue
-
                 if posts_db.find(submission.id) is not None:
                     # Ignore posts that we've already seen
                     logging.debug(f"Ignored - Already in db - {truncated_title}")
+                    continue
+
+                if not submission.is_self:
+                    # We only care about self (aka text) posts
+                    logging.debug(f"Ignored - Non-text post - {truncated_title}")
                     continue
 
                 # New post so time to classify it
