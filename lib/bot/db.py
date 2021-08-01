@@ -7,24 +7,36 @@ from typing import Optional, Tuple, Union
 
 from lib.classifier.datasets import Category
 
+DbEntry = Tuple[str, int, float, str, str]
+
 
 @dataclass
 class PostsEntry:
     id: str
     prediction: Category
     probability: float
+    title: str
+    body: str
 
     @classmethod
-    def from_db_entry(cls, entry: Tuple[str, int, float]) -> PostsEntry:
-        id, prediction_target, probability = entry
+    def from_db_entry(cls, entry: DbEntry) -> PostsEntry:
+        id, prediction_target, probability, title, body = entry
         return cls(
             id=id,
             prediction=Category.from_target(prediction_target),
             probability=probability,
+            title=title,
+            body=body,
         )
 
-    def as_db_entry(self) -> Tuple[str, int, float]:
-        return (self.id, self.prediction.as_target(), self.probability)
+    def as_db_entry(self) -> DbEntry:
+        return (
+            self.id,
+            self.prediction.as_target(),
+            self.probability,
+            self.title,
+            self.body,
+        )
 
 
 class PostsDb:
@@ -68,7 +80,9 @@ class PostsDb:
             CREATE TABLE posts(
                 id TEXT NOT NULL PRIMARY KEY,
                 prediction INTEGER NOT NULL,
-                probability REAL NOT NULL
+                probability REAL NOT NULL,
+                title TEXT NOT NULL,
+                body TEXT
             )
             """
         )
@@ -76,7 +90,9 @@ class PostsDb:
         return cls(connection, cursor)
 
     def insert(self, entry: PostsEntry) -> None:
-        self._cursor.execute("INSERT INTO posts VALUES (?, ?, ?)", entry.as_db_entry())
+        self._cursor.execute(
+            "INSERT INTO posts VALUES (?, ?, ?, ?, ?)", entry.as_db_entry()
+        )
 
         # This shouldn't be very performance sensitive so just commit on every insertion
         self._connection.commit()

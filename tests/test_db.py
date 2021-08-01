@@ -7,8 +7,12 @@ def test_posts_db() -> None:
     posts_db = PostsDb.create(":memory:")
 
     # Insert some dummy values
-    dummy_entry1 = PostsEntry("test_id1", Category.LANG, 71.23)
-    dummy_entry2 = PostsEntry("test_id2", Category.GAME, 98.76)
+    dummy_entry1 = PostsEntry(
+        "test_id1", Category.LANG, 71.23, "Lang title", "Lang body"
+    )
+    dummy_entry2 = PostsEntry(
+        "test_id2", Category.GAME, 98.76, "Game title", "Game body"
+    )
     posts_db.insert(dummy_entry1)
     posts_db.insert(dummy_entry2)
 

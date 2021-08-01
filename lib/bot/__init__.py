@@ -5,6 +5,7 @@ from time import sleep
 from typing import List
 
 from praw import Reddit
+from praw.models import Subreddit
 
 from lib.bot.db import PostsDb, PostsEntry
 from lib.classifier import TextClassifier
@@ -59,7 +60,7 @@ def run(config: Config, args: Args) -> None:
     logging.info("Starting the reddit bot")
     logging.info("Setting up the r/rust submission stream")
     reddit = Reddit(**config.as_praw_auth_kwargs())
-    subreddit = reddit.subreddit("rust")
+    subreddit: Subreddit = reddit.subreddit("rust")
 
     logging.info("Connecting to the posts database")
     posts_db = PostsDb.from_file_else_create(config.posts_db())
@@ -117,14 +118,16 @@ def run(config: Config, args: Args) -> None:
 
                 # New post so time to classify it
                 category, probability = classifier.predict(f"{title}\n{body}")
-                percent_probability = 100 * probability
+                percent_probability = 100 * float(probability)
                 logging.info(
                     f"Classified - {category} ({percent_probability:.2f}%) -"
                     f" {truncated_title}"
                 )
 
                 # Add the new entry to the database
-                posts_db.insert(PostsEntry(id, category, float(probability)))
+                posts_db.insert(
+                    PostsEntry(id, category, float(probability), title, body)
+                )
 
                 if daily_comment_total >= config.daily_comment_limit():
                     logging.info(
