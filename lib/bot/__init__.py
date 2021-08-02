@@ -7,7 +7,7 @@ from typing import List
 from praw import Reddit
 from praw.models import Subreddit
 
-from lib.bot.db import PostsDb, PostsEntry
+from lib.bot.db import Db, PostEntry
 from lib.classifier import TextClassifier
 from lib.classifier.datasets import Category
 from lib.cli import Args
@@ -63,7 +63,7 @@ def run(config: Config, args: Args) -> None:
     subreddit: Subreddit = reddit.subreddit("rust")
 
     logging.info("Connecting to the posts database")
-    posts_db = PostsDb.from_file_else_create(config.posts_db())
+    posts_db = Db(str(f"sqlite:///{config.posts_db()}"))
 
     logging.info("Setting up the text classifier")
     classifier = TextClassifier.from_cache_file_else_train(
@@ -126,7 +126,7 @@ def run(config: Config, args: Args) -> None:
 
                 # Add the new entry to the database
                 posts_db.insert(
-                    PostsEntry(id, category, float(probability), title, body)
+                    PostEntry(id, category, float(probability), title, body)
                 )
 
                 if daily_comment_total >= config.daily_comment_limit():
