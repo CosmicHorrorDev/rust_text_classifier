@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Tuple
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 from tqdm import tqdm
 
 from lib.classifier import score_classifier
 from lib.classifier.datasets import Category
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def percent_str(f: float) -> str:
@@ -25,23 +24,42 @@ def print_row(entries: List[Any]) -> None:
 
 def main() -> List:
     hist = []
+
+    results: List[Tuple[Category, Category, float]] = []
+    for _ in tqdm(range(1000)):
+        results += score_classifier(corpus_path=Path("posts_corpus"))
+
     for i in range(5, 8):
-        lang_scores = []
-        game_scores = []
         threshold = i / 10
-        for _ in tqdm(range(100)):
-            score = score_classifier(
-                corpus_path=Path("posts_corpus"), prediction_threshold=threshold
-            )
-            lang_scores.append(score[Category.LANG])
-            game_scores.append(score[Category.GAME])
+
+        lang_num_correct = 0
+        lang_num_incorrect = 0
+        lang_num_ignored = 0
+
+        game_num_correct = 0
+        game_num_incorrect = 0
+        game_num_ignored = 0
+
+        for (real_category, pred_category, pred_probability) in results:
+            if pred_probability < threshold:
+                if real_category == Category.LANG:
+                    lang_num_ignored += 1
+                else:
+                    game_num_ignored += 1
+            elif real_category != pred_category:
+                if real_category == Category.LANG:
+                    lang_num_incorrect += 1
+                else:
+                    game_num_incorrect += 1
+            else:
+                if real_category == Category.LANG:
+                    lang_num_correct += 1
+                else:
+                    game_num_correct += 1
 
         print(f"Threshold: {threshold}")
         print_row([" ", "correct", "incorrect", "ignored"])
 
-        lang_num_correct = sum([s.num_correct for s in lang_scores])
-        lang_num_incorrect = sum([s.num_incorrect for s in lang_scores])
-        lang_num_ignored = sum([s.num_ignored for s in lang_scores])
         lang_total = lang_num_correct + lang_num_incorrect + lang_num_ignored
         print_row(
             [
@@ -52,9 +70,6 @@ def main() -> List:
             ]
         )
 
-        game_num_correct = sum([s.num_correct for s in game_scores])
-        game_num_incorrect = sum([s.num_incorrect for s in game_scores])
-        game_num_ignored = sum([s.num_ignored for s in game_scores])
         game_total = game_num_correct + game_num_incorrect + game_num_ignored
         print_row(
             [
@@ -65,8 +80,14 @@ def main() -> List:
             ]
         )
 
-        lang = [n / lang_total for n in [lang_num_correct, lang_num_incorrect, lang_num_ignored]]
-        game = [n / game_total for n in [game_num_correct, game_num_incorrect, game_num_ignored]]
+        lang = [
+            n / lang_total
+            for n in [lang_num_correct, lang_num_incorrect, lang_num_ignored]
+        ]
+        game = [
+            n / game_total
+            for n in [game_num_correct, game_num_incorrect, game_num_ignored]
+        ]
         hist.append(["lang", threshold] + lang)
         hist.append(["game", threshold] + game)
 
@@ -74,25 +95,29 @@ def main() -> List:
 
 
 def plot_results(hist) -> None:
-    df = pd.DataFrame(hist, columns=['class', 'thresh', 'correct', 'incorrect', 'ignored'])
+    df = pd.DataFrame(
+        hist, columns=["class", "thresh", "correct", "incorrect", "ignored"]
+    )
 
     # * set styles
     sns.set(style="ticks", context="paper")
 
     # * Generate cummulative values
-    df['incorrect'] += df['correct']
-    df['ignored'] += df['incorrect']
+    df["incorrect"] += df["correct"]
+    df["ignored"] += df["incorrect"]
 
     # * Create labels to divide stacked bars
-    df['label'] = [f"{row['class']}: {row['thresh']}" for _, row in df.iterrows()]
+    df["label"] = [f"{row['class']}: {row['thresh']}" for _, row in df.iterrows()]
 
     # * Overlay cummulative values to create a stacked plot (order matters!)
-    p = sns.barplot(data=df, x='label', color='slategrey', y='ignored')
-    sns.barplot(data=df, x='label', color='tomato', y='incorrect')
-    sns.barplot(data=df, x='label', color='seagreen', y='correct')
+    p = sns.barplot(data=df, x="label", color="slategrey", y="ignored")
+    sns.barplot(data=df, x="label", color="tomato", y="incorrect")
+    sns.barplot(data=df, x="label", color="seagreen", y="correct")
 
     # * Set labels and title
-    p.set(xlabel="Threshold", ylabel="%", title='Accuracy of each Class over Thresholds')
+    p.set(
+        xlabel="Threshold", ylabel="%", title="Accuracy of each Class over Thresholds"
+    )
 
     plt.show()
 

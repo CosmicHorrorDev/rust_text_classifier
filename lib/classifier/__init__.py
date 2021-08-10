@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import pickle
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 from numpy import float64
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -14,34 +13,11 @@ from sklearn.pipeline import Pipeline
 from lib.classifier.datasets import Category, Posts, PostsLoader
 
 
-@dataclass
-class ScoreData:
-    num_correct: int
-    num_incorrect: int
-    num_ignored: int
-
-    def __init__(self) -> None:
-        self.num_correct = 0
-        self.num_incorrect = 0
-        self.num_ignored = 0
-
-    def inc_correct(self) -> None:
-        self.num_correct += 1
-
-    def inc_incorrect(self) -> None:
-        self.num_incorrect += 1
-
-    def inc_ignored(self) -> None:
-        self.num_ignored += 1
-
-
-# TODO: use random state normally
 def score_classifier(
     *,
     corpus_path: Path,
     training_percentage: float = 0.8,
-    prediction_threshold: float = 0.5,
-) -> Dict[Category, ScoreData]:
+) -> List[Tuple[Category, Category, float]]:
     if training_percentage > 1.0 or training_percentage < 0.0:
         raise ValueError("Percentage is represented as a float between 0.0 and 1.0")
 
@@ -54,25 +30,15 @@ def score_classifier(
     classifier = TextClassifier.from_training(training_set)
     predictions = classifier.predict_set(test_set.as_data())
 
-    score_data = {}
-    for category in Category:
-        score_data[category] = ScoreData()
+    results: List[Tuple[Category, Category, float]] = []
 
     # Gather the results for the predictions
     for ((pred_category, pred_prob), (real_category, text)) in zip(
         predictions, test_set.category_post_pairs
     ):
-        correct_prediction = pred_category == real_category
+        results.append((real_category, pred_category, float(pred_prob)))
 
-        if pred_prob < prediction_threshold:
-            score_data[real_category].inc_ignored()
-        else:
-            if correct_prediction:
-                score_data[real_category].inc_correct()
-            else:
-                score_data[real_category].inc_incorrect()
-
-    return score_data
+    return results
 
 
 class TextClassifier:
