@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
+from lib.utils import simplify_embedded_urls
+
 
 class Category(Enum):
     LANG = 0
@@ -47,7 +49,8 @@ class Post:
         )
 
     def __str__(self) -> str:
-        return f"{self.title}\n{self.body}"
+        temp = f"{self.title}\n{self.body}"
+        return simplify_embedded_urls(temp)
 
 
 # `load_files` normally returns a `Bunch` which is weakly typed enough to make my skin

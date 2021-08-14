@@ -29,7 +29,7 @@ def main() -> List:
     for _ in tqdm(range(1000)):
         results += score_classifier(corpus_path=Path("posts_corpus"))
 
-    for i in range(5, 8):
+    for i in range(5, 10):
         threshold = i / 10
 
         lang_num_correct = 0
